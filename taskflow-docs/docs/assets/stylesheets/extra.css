@@ -1,0 +1,114 @@
+/* --- Осенняя тематика TaskFlow: harvest palette ---
+   Эспрессо-коричневый, терракота, тёплый янтарь и крем.
+   Ориентиры: «rustic» палитры W3Schools (#7e4a35, #cab577, #dbceb0),
+   доработаны под мягкую, приятную для чтения гамму. */
+
+/* Светлая схема */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #b4491f;
+  --md-primary-fg-color--light: #d97c4a;
+  --md-primary-fg-color--dark: #8a2f14;
+  --md-accent-fg-color: #d89a3c;
+  --md-accent-fg-color--transparent: rgba(216, 154, 60, 0.12);
+  --md-default-fg-color: #3b2418;
+  --md-default-fg-color--light: #6f4e36;
+  --md-default-fg-color--lighter: #a0856b;
+  --md-default-bg-color: #faf5e9;
+  --md-default-bg-color--light: #fffdf5;
+  --md-default-bg-color--lighter: #f3ead6;
+  --md-code-bg-color: #f4ebd8;
+  --md-code-fg-color: #7a3213;
+  --md-typeset-a-color: #b4491f;
+  --md-typeset-mark-color: rgba(216, 154, 60, 0.4);
+  --md-footer-bg-color: #2a170d;
+  --md-footer-fg-color: #f6ebd9;
+}
+
+/* Тёмная схема */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #d89a3c;
+  --md-primary-fg-color--light: #f0be6e;
+  --md-primary-fg-color--dark: #a9742b;
+  --md-accent-fg-color: #e9b45b;
+  --md-accent-fg-color--transparent: rgba(233, 180, 91, 0.15);
+  --md-default-fg-color: #f1e4cd;
+  --md-default-fg-color--light: #c4ad8d;
+  --md-default-bg-color: #22130c;
+  --md-default-bg-color--light: #2b1a11;
+  --md-code-bg-color: #2f1d13;
+  --md-code-fg-color: #f0c07f;
+  --md-typeset-a-color: #e9b45b;
+  --md-typeset-mark-color: rgba(169, 116, 43, 0.5);
+  --md-footer-bg-color: #150b05;
+  --md-footer-fg-color: #d6c2a4;
+}
+
+/* Шапка сайта: тёплый янтарный градиент */
+.md-header {
+  background: linear-gradient(90deg, #7e2b14 0%, #b4491f 55%, #d89a3c 100%);
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  background: linear-gradient(90deg, #5a2410 0%, #7e3b17 45%, #a9742b 100%);
+}
+
+/* Табы и активные элементы навигации */
+.md-tabs {
+  background: rgba(142, 51, 24, 0.45);
+}
+
+[data-md-color-scheme="slate"] .md-tabs {
+  background: rgba(126, 59, 23, 0.5);
+}
+
+/* Заголовки страницы в тёплом коричневом */
+.md-content h1,
+.md-content h2,
+.md-content h3,
+.md-content h4 {
+  color: #8a2f14;
+}
+
+[data-md-color-scheme="slate"] .md-content h1,
+[data-md-color-scheme="slate"] .md-content h2,
+[data-md-color-scheme="slate"] .md-content h3,
+[data-md-color-scheme="slate"] .md-content h4 {
+  color: #e9b45b;
+}
+
+/* Подложка шапок таблиц */
+.md-typeset table:not([class]) th {
+  background-color: #ecd3a8;
+  color: #4a2b17;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background-color: #5e3118;
+  color: #f1e4cd;
+}
+
+/* Цвет выделения текста */
+::selection {
+  background-color: rgba(216, 154, 60, 0.32);
+}
+
+/* Тёплый скроллбар */
+* {
+  scrollbar-color: #d89a3c rgba(0, 0, 0, 0.12);
+}
+
+/* Блоки кода в тёплых тонах */
+.md-typeset pre > code,
+.md-typeset .highlight {
+  border: 1px solid rgba(138, 47, 20, 0.18);
+}
+
+[data-md-color-scheme="slate"] .md-typeset pre > code,
+[data-md-color-scheme="slate"] .md-typeset .highlight {
+  border-color: rgba(233, 180, 91, 0.2);
+}
+
+/* Ссылки в подвалe */
+.md-footer__link {
+  color: #f6ebd9;
+}
