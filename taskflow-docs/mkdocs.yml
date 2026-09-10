@@ -1,0 +1,86 @@
+site_name: TaskFlow — документация
+site_description: Система управления задачами и проектами
+site_author: "[Имя Фамилия]"
+site_url: "https://example.github.io/taskflow-docs/"
+
+repo_name: "example/taskflow-docs"
+repo_url: "https://github.com/example/taskflow-docs"
+
+theme:
+  name: material
+  language: ru
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Тёмная тема
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Светлая тема
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+markdown_extensions:
+  - pymdownx.snippets:
+      base_path: ["docs/snippets"]
+      check_paths: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search
+  - tags
+  - glightbox
+  - git-revision-date-localized:
+      type: datetime
+      enabled: !ENV [CI, false]
+  - blog:
+      blog_dir: blog
+      post_date_format: long
+      post_url_format: "{date}/{slug}"
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+
+nav:
+  - Главная: index.md
+  - Начало работы:
+      - Установка: getting-started/installation.md
+      - Быстрый старт: getting-started/quick-start.md
+      - Интерфейс: getting-started/interface.md
+  - Руководство пользователя:
+      - Задачи: user-guide/tasks.md
+      - Проекты: user-guide/projects.md
+      - Отчёты: user-guide/reports.md
+  - Администрирование:
+      - Пользователи: admin-guide/users.md
+      - Настройки: admin-guide/settings.md
+  - API: api/reference.md
+  - Блог: blog/index.md
+  - Теги: tags.md
+  - FAQ: faq.md
+  - Release notes: release-notes.md
+  - Глоссарий: glossary.md
