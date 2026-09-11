@@ -1,0 +1,197 @@
+/* --- TaskFlow: спокойная осень (neutral autumn) ---
+   Приглушённая терракота, пыльный мёд, тёплый крем.
+   Низкая насыщенность, один акцент. */
+
+/* Светлая схема */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #9C5B45;
+  --md-primary-fg-color--light: #B87A63;
+  --md-primary-fg-color--dark: #7A4132;
+
+  --md-accent-fg-color: #B8894D;
+  --md-accent-fg-color--transparent: rgba(184, 137, 77, 0.12);
+
+  --md-default-fg-color: #2E2B27;
+  --md-default-fg-color--light: #5A544C;
+  --md-default-fg-color--lighter: #8C8578;
+
+  --md-default-bg-color: #FAF8F4;
+  --md-default-bg-color--light: #FFFFFF;
+  --md-default-bg-color--lighter: #F0EBE1;
+
+  --md-code-bg-color: #F1ECE3;
+  --md-code-fg-color: #6B3A28;
+
+  --md-typeset-a-color: #9C5B45;
+  --md-typeset-mark-color: rgba(184, 137, 77, 0.35);
+
+  --md-footer-bg-color: #2A2520;
+  --md-footer-fg-color: #E8E2D6;
+}
+
+/* Тёмная схема */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #C99A6D;
+  --md-primary-fg-color--light: #D9B587;
+  --md-primary-fg-color--dark: #A87A52;
+
+  --md-accent-fg-color: #D9B587;
+  --md-accent-fg-color--transparent: rgba(217, 181, 135, 0.14);
+
+  --md-default-fg-color: #E8E2D6;
+  --md-default-fg-color--light: #A89E8E;
+  --md-default-fg-color--lighter: #6F685C;
+
+  --md-default-bg-color: #1C1916;
+  --md-default-bg-color--light: #25221E;
+  --md-default-bg-color--lighter: #2A2620;
+
+  --md-code-bg-color: #2A2620;
+  --md-code-fg-color: #E0B87A;
+
+  --md-typeset-a-color: #C99A6D;
+  --md-typeset-mark-color: rgba(217, 181, 135, 0.4);
+
+  --md-footer-bg-color: #141210;
+  --md-footer-fg-color: #A89E8E;
+}
+
+/* Шапка: очень мягкий градиент между двумя близкими оттенками */
+.md-header {
+  background: linear-gradient(90deg, #7A4132 0%, #9C5B45 100%);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  background: linear-gradient(90deg, #2A2520 0%, #3A322A 100%);
+}
+
+/* Табы */
+.md-tabs {
+  background: rgba(122, 65, 50, 0.65);
+}
+
+[data-md-color-scheme="slate"] .md-tabs {
+  background: rgba(42, 37, 32, 0.7);
+}
+
+/* Заголовки — тёплый коричневый, не красный */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  color: #6B4030;
+  font-weight: 500;
+}
+
+.md-typeset h1 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+[data-md-color-scheme="slate"] .md-typeset h1,
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3,
+[data-md-color-scheme="slate"] .md-typeset h4 {
+  color: #E0BB8A;
+}
+
+/* Таблицы — мягкий фон шапки, без лимонного */
+.md-typeset table:not([class]) {
+  border: 1px solid #E5DDD0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: #EFE6D5;
+  color: #4A3A2E;
+  font-weight: 600;
+  border-bottom: 1px solid #E5DDD0;
+}
+
+.md-typeset table:not([class]) tr:nth-child(even) {
+  background-color: rgba(239, 230, 213, 0.35);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
+  border-color: #3A322A;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background-color: #3A322A;
+  color: #E8E2D6;
+  border-bottom-color: #4A4038;
+}
+
+/* Блоки кода — тонкая рамка, без ярких акцентов */
+.md-typeset pre > code,
+.md-typeset .highlight {
+  border: 1px solid rgba(122, 65, 50, 0.15);
+  border-radius: 6px;
+}
+
+[data-md-color-scheme="slate"] .md-typeset pre > code,
+[data-md-color-scheme="slate"] .md-typeset .highlight {
+  border-color: rgba(217, 181, 135, 0.15);
+}
+
+/* Выделение текста */
+::selection {
+  background-color: rgba(184, 137, 77, 0.3);
+}
+
+/* Скроллбар */
+* {
+  scrollbar-color: #B8894D rgba(0, 0, 0, 0.08);
+}
+
+/* Admonition — мягкие нейтральные блоки */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 6px;
+  border-left-width: 3px;
+  box-shadow: none;
+}
+
+/* Кнопка PDF */
+.md-download-btn {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  color: #FFFFFF;
+  background: #9C5B45;
+  box-shadow: 0 4px 14px rgba(58, 30, 12, 0.22);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.md-download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(58, 30, 12, 0.3);
+  background: #B87A63;
+}
+
+.md-download-btn[hidden] { display: none; }
+
+[data-md-color-scheme="slate"] .md-download-btn {
+  background: #C99A6D;
+  color: #1C1916;
+}
+
+[data-md-color-scheme="slate"] .md-download-btn:hover {
+  background: #D9B587;
+}
+
+/* Подвал */
+.md-footer__link {
+  color: #E8E2D6;
+}

@@ -26,15 +26,24 @@
 
 Что генерируется:
     1. Титульная страница (по шаблону primer.docx)
-    2. Раздел «Изменения в документе» (таблица версий + предупреждение)
+    2. Раздел «Изменения в документе» (таблица версий; предупреждение —
+       только если MD содержит ``!!! warning``, таблица берётся из шаблона)
     3. Раздел «Содержание» (автообновляемое Word-поле TOC по заголовкам MD)
     4. Основное содержимое MD-файла с нумерацией разделов
     5. Колонтитуры (название в шапке, копирайт в подвале)
+
+Разделы 2-4, колонтитулы и оформление (цвета, размеры шрифтов, стили
+таблиц и подписей) берутся из шаблона primer.docx. Скрипт не содержит
+жёстких значений оформления: они читаются из стилей/элементов шаблона.
+Хардкод остался только в fallback-ветках для шаблонов, в которых
+соответствующего элемента просто нет.
 """
 
 import argparse
 import copy
 import datetime
+from xml.sax.saxutils import escape as _xml_escape
+import io
 import os
 import re
 import sys
@@ -47,6 +56,7 @@ from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.section import WD_SECTION
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml
+from lxml import etree
 
 
 DOCS_ROOT = Path(__file__).resolve().parent.parent
@@ -226,7 +236,6 @@ def _add_run(par, text, bold=False, italic=False, size=None, color=None):
     r = par.add_run(text)
     r.bold = bold
     r.italic = italic
-    r.font.name = "Arial"
     if size:
         r.font.size = size
     if color:
@@ -236,8 +245,11 @@ def _add_run(par, text, bold=False, italic=False, size=None, color=None):
 
 def _hyperlink_run(par, text, bookmark):
     run = par.add_run(text)
-    run.font.color.rgb = RGBColor(0x05, 0x63, 0xFF)
-    run.font.underline = True
+    try:
+        run.style = run.part.document.styles["Hyperlink"]
+    except Exception:
+        run.font.color.rgb = RGBColor(0x05, 0x63, 0xFF)
+        run.font.underline = True
     R = run._element
 
     def _r_with(inner_xml):
@@ -354,13 +366,6 @@ def _clean(text):
     return text.strip()
 
 
-def _hsize(run, level):
-    sizes = {1: 18, 2: 16, 3: 14, 4: 13, 5: 12, 6: 11}
-    run.font.size = Pt(sizes.get(level, 12))
-    run.font.color.rgb = RGBColor(0x80, 0xBC, 0x48)
-    run.font.name = "Arial"
-
-
 def _prev_heading_level(doc):
     body = doc.element.body
     for el in reversed(body):
@@ -411,8 +416,6 @@ def _heading(doc, title, level, numbered=True):
         pPr.append(ol)
     else:
         ol.set(qn("w:val"), str(level - 1))
-    for r in h.runs:
-        _hsize(r, level)
     global _CUR_MD, _HAS_MD_ANCHOR
     if _CUR_MD and not _HAS_MD_ANCHOR:
         _HAS_MD_ANCHOR = True
@@ -442,6 +445,23 @@ def _find_rel_id(doc, target_substr: str) -> str | None:
         if target_substr in rel.target_ref:
             return rel.rId
     return None
+
+
+def _capture_content_section_refs(doc) -> tuple[str | None, str | None]:
+    """Capture header/footer references of the template's body-final section.
+
+    These parts define the kolontituly of the content pages in the template.
+    The references must be read before add_section() clones and strips the
+    body-final sectPr."""
+    body_final = doc.element.body.find(qn("w:sectPr"))
+    if body_final is None:
+        return None, None
+    hr = body_final.find(qn("w:headerReference"))
+    fr = body_final.find(qn("w:footerReference"))
+    return (
+        hr.get(qn("r:id")) if hr is not None else None,
+        fr.get(qn("r:id")) if fr is not None else None,
+    )
 
 
 def _set_footer_ref(section, rId: str, footer_type: str = "default"):
@@ -491,7 +511,15 @@ def _update_header_text(header_part, product_name: str):
         _add_run(p, product_name, size=Pt(11), color=RGBColor(0x7F, 0x7F, 0x7F))
 
 
-def _add_footer(doc, year: int, product_name: str):
+def _add_footer(doc, product_name: str, content_header_rid=None, content_footer_rid=None):
+    """Set up headers/footers for all sections.
+
+    The title section (idx 0) gets the template's empty footer and no header.
+    Content sections reuse the template's own header/footer parts captured from
+    the body-final sectPr of the source document, so the template layout
+    (page-number fields, borders, copyright) is preserved. Only the product
+    name placeholder in the header is replaced.
+    """
     for idx, section in enumerate(doc.sections):
         if idx == 0:
             rId = _find_rel_id(doc, "footer1.xml")
@@ -501,73 +529,139 @@ def _add_footer(doc, year: int, product_name: str):
                 section._sectPr.remove(ref)
             continue
 
-        footer = section.footer
-        footer.is_linked_to_previous = False
-        for p in list(footer.paragraphs):
-            p._element.getparent().remove(p._element)
-        for t in list(footer.tables):
-            t._element.getparent().remove(t._element)
-        p = footer.add_paragraph()
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        _add_run(p, f"©Группа компаний «Цифра», {year}. Все права защищены.",
-                 size=Pt(9), color=RGBColor(0x66, 0x66, 0x66))
+        if content_header_rid:
+            _set_header_ref(section, content_header_rid, "default")
+            try:
+                _update_header_text(section.header, product_name)
+            except Exception:
+                pass
+        else:
+            header_rId = _find_rel_id(doc, "header1.xml")
+            if header_rId:
+                _set_header_ref(section, header_rId, "default")
+            header = section.header
+            header.is_linked_to_previous = False
+            _update_header_text(header, product_name)
 
-        header_rId = _find_rel_id(doc, "header1.xml")
-        if header_rId:
-            _set_header_ref(section, header_rId, "default")
-        header = section.header
-        header.is_linked_to_previous = False
-        _update_header_text(header, product_name)
+        if content_footer_rid:
+            _set_footer_ref(section, content_footer_rid, "default")
+        else:
+            footer = section.footer
+            footer.is_linked_to_previous = False
+            for p in list(footer.paragraphs):
+                p._element.getparent().remove(p._element)
+            for t in list(footer.tables):
+                t._element.getparent().remove(t._element)
+            p = footer.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            _add_run(p, f"©Группа компаний «Цифра», {datetime.date.today().year}. Все права защищены.",
+                     size=Pt(9), color=RGBColor(0x66, 0x66, 0x66))
 
 
-# --- admonition styles ---
+# --- admonitions ---
+# The template renders notes/warnings as plain paragraphs with a bold prefix
+# (e.g. "Примечание. …", "ВНИМАНИЕ! …"). Follow that convention instead of
+# drawing colored boxes with hardcoded colors.
 
-_ADMON_STYLE = {
-    "note": {"fill": "E3F2FD", "border": "1E88E5", "title": "Примечание", "title_color": "1565C0"},
-    "info": {"fill": "E0F7FA", "border": "00ACC1", "title": "Сведения", "title_color": "00838F"},
-    "tip": {"fill": "E8F5E9", "border": "43A047", "title": "Совет", "title_color": "2E7D32"},
-    "warning": {"fill": "FFF8E1", "border": "FFA000", "title": "Важно", "title_color": "E65100"},
-    "danger": {"fill": "FFEBEE", "border": "E53935", "title": "Опасно", "title_color": "C62828"},
-    "question": {"fill": "F3E5F5", "border": "8E24AA", "title": "Вопрос", "title_color": "6A1B9A"},
+_ADMON_LABEL = {
+    "note": "Примечание.",
+    "info": "Сведения.",
+    "tip": "Совет.",
+    "warning": "ВНИМАНИЕ!",
+    "danger": "Опасно!",
+    "question": "Вопрос.",
 }
 
 
-def _rgb(hexstr: str) -> RGBColor:
-    return RGBColor(int(hexstr[0:2], 16), int(hexstr[2:4], 16), int(hexstr[4:6], 16))
+def _admon_label(kind: str) -> str:
+    return _ADMON_LABEL.get(kind, "Примечание.")
 
 
 def _add_admonition(doc, kind: str, title: str):
-    st = _ADMON_STYLE.get(kind, _ADMON_STYLE["note"])
-    t = doc.add_table(rows=1, cols=1)
-    t.alignment = WD_TABLE_ALIGNMENT.CENTER
-    cell = t.cell(0, 0)
-    cell.width = Inches(6.3)
-    tcPr = cell._tc.get_or_add_tcPr()
-    tcPr.append(parse_xml(
-        f'<w:shd {nsdecls("w")} w:val="clear" w:color="auto" w:fill="{st["fill"]}"/>'
-    ))
-    tcPr.append(parse_xml(
-        f'<w:tcBorders {nsdecls("w")}>'
-        f'<w:top w:val="single" w:sz="12" w:space="0" w:color="{st["border"]}"/>'
-        f'<w:left w:val="single" w:sz="12" w:space="0" w:color="{st["border"]}"/>'
-        f'<w:bottom w:val="single" w:sz="12" w:space="0" w:color="{st["border"]}"/>'
-        f'<w:right w:val="single" w:sz="12" w:space="0" w:color="{st["border"]}"/>'
-        f'</w:tcBorders>'
-    ))
-    tcPr.append(parse_xml(
-        f'<w:tcMar {nsdecls("w")}>'
-        f'<w:top w:w="120" w:type="dxa"/><w:left w:w="160" w:type="dxa"/>'
-        f'<w:bottom w:w="120" w:type="dxa"/><w:right w:w="160" w:type="dxa"/>'
-        f'</w:tcMar>'
-    ))
-    p = cell.paragraphs[0]
-    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    _add_run(p, title, bold=True, size=Pt(11), color=_rgb(st["title_color"]))
-    p.paragraph_format.space_after = Pt(4)
-    return t, cell
+    p = doc.add_paragraph()
+    _add_run(p, title, bold=True)
+    return p
 
 
 # --- render markdown ---
+
+def _add_caption(doc, text: str, style_name: str):
+    """Add a figure/table caption using a template paragraph style."""
+    pc = doc.add_paragraph()
+    try:
+        pc.style = style_name
+    except Exception:
+        pass
+    _add_run(pc, text)
+    return pc
+
+
+def _template_header_fill(doc) -> str | None:
+    """Read the header-row fill colour from the template's table style
+    ('Цифра', used for the revision table), instead of hardcoding one."""
+    try:
+        style = doc.styles["Цифра"]
+    except KeyError:
+        return None
+    for tbl_style_pr in style.element.iter(qn("w:tblStylePr")):
+        if tbl_style_pr.get(qn("w:type")) != "firstRow":
+            continue
+        for shd in tbl_style_pr.iter(qn("w:shd")):
+            return shd.get(qn("w:fill"))
+    return None
+
+
+# --- pymdownx snippet expansion ---
+
+_SNIPPET_RE = re.compile(r'^--8<--\s+"([^"]+)"\s*$')
+
+
+def _expand_snippets(text: str, base: Path, _seen: set | None = None) -> str:
+    """Expand pymdownx snippet directives (``--8<-- "file.md"``) inline.
+
+    Snippet filenames are resolved the same way ``pymdownx.snippets`` does:
+    first relative to the current markdown file's directory, then against the
+    docs root and the ``docs/snippets`` folder. Expansion is recursive and
+    cycle-safe, so snippets that reference further snippets are expanded too.
+    """
+    if _seen is None:
+        _seen = set()
+    out_lines = []
+    for line in text.split("\n"):
+        m = _SNIPPET_RE.match(line)
+        if not m:
+            out_lines.append(line)
+            continue
+        name = m.group(1).strip()
+        found = None
+        for cand in (
+            base / name,
+            DOCS_ROOT / name,
+            DOCS_ROOT / "snippets" / name,
+            DOCS_ROOT / "docs" / name,
+            DOCS_ROOT / "docs" / "snippets" / name,
+        ):
+            try:
+                cand = cand.resolve()
+            except OSError:
+                continue
+            if cand.exists():
+                found = cand
+                break
+        if found is None:
+            out_lines.append(f"*[Сниппет не найден: {name}]*")
+            continue
+        if found in _seen:
+            out_lines.append(f"*[Рекурсивный сниппет: {name}]*")
+            continue
+        _seen.add(found)
+        try:
+            snippet = found.read_text(encoding="utf-8")
+            out_lines.append(_expand_snippets(snippet, found.parent, _seen))
+        finally:
+            _seen.discard(found)
+    return "\n".join(out_lines)
+
 
 def _render_md(md_path: Path, heading_base: int, doc, fig_cnt, tbl_cnt):
     global _CUR_MD, _HAS_MD_ANCHOR
@@ -585,6 +679,7 @@ def _render_lines(lines, md_path: Path, heading_base: int, doc, fig_cnt, tbl_cnt
     global _CUR_MD, _HAS_MD_ANCHOR
     _CUR_MD = str(md_path.resolve())
     _HAS_MD_ANCHOR = False
+    lines = _expand_snippets("\n".join(lines), md_path).split("\n")
     first_h1 = skip_first_h1
     md_rel = str(md_path.parent.relative_to(DOCS_ROOT))
     i = 0
@@ -683,9 +778,7 @@ def _render_lines(lines, md_path: Path, heading_base: int, doc, fig_cnt, tbl_cnt
                     j += 1
                 ct = " ".join(cap)
                 fig_cnt[0] += 1
-                pc = doc.add_paragraph()
-                pc.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                _add_run(pc, f"Рисунок {fig_cnt[0]} - {ct or alt}", italic=True, size=Pt(10))
+                _add_caption(doc, f"Рисунок {fig_cnt[0]} - {ct or alt}", "Название рисунка")
                 i = j + 1
             else:
                 i += 1
@@ -697,7 +790,7 @@ def _render_lines(lines, md_path: Path, heading_base: int, doc, fig_cnt, tbl_cnt
             kind = adm.group(3).lower()
             resto = adm.group(4).strip()
             qt = re.match(r'^"([^"]*)"', resto)
-            title = qt.group(1).strip() if qt else (resto or _ADMON_STYLE.get(kind, _ADMON_STYLE["note"])["title"])
+            title = qt.group(1).strip() if qt else (resto or _admon_label(kind))
             if adm_marker.startswith("?") and adm_indent > 0:
                 pass
             else:
@@ -712,16 +805,30 @@ def _render_lines(lines, md_path: Path, heading_base: int, doc, fig_cnt, tbl_cnt
                         j += 1
                     else:
                         break
-                t, cell = _add_admonition(doc, kind, title)
+                if kind == "warning":
+                    _render_warning_table(
+                        doc,
+                        qt.group(1).strip() if qt else "",
+                        clines,
+                        md_rel,
+                        fig_cnt,
+                    )
+                    i = j
+                    continue
+                p = _add_admonition(doc, kind, title)
+                first = True
                 for cl in clines:
                     ct = cl.strip()
                     if not ct:
-                        cell.add_paragraph()
                         continue
-                    p = cell.add_paragraph()
-                    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                    p.paragraph_format.space_after = Pt(2)
-                    _inline(p, ct, md_rel, fig_cnt)
+                    if first:
+                        p.add_run(" ")
+                        _inline(p, ct, md_rel, fig_cnt)
+                        first = False
+                    else:
+                        p2 = doc.add_paragraph()
+                        p2.paragraph_format.space_after = Pt(2)
+                        _inline(p2, ct, md_rel, fig_cnt)
                 i = j
                 continue
         if "|" in line and re.match(r'^\s*\|', line):
@@ -748,22 +855,22 @@ def _render_lines(lines, md_path: Path, heading_base: int, doc, fig_cnt, tbl_cnt
                     i += 1
                 if cap_text:
                     tbl_cnt[0] += 1
-                    pc = doc.add_paragraph()
-                    pc.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    _add_run(pc, f"Таблица {tbl_cnt[0]} - {cap_text}", bold=True, size=Pt(10))
+                    _add_caption(doc, f"Таблица {tbl_cnt[0]} - {cap_text}", "Название таблицы")
             if rows:
                 nc = max(len(r) for r in rows)
                 t = doc.add_table(rows=len(rows), cols=nc)
                 t.style = "Table Grid"
                 t.alignment = WD_TABLE_ALIGNMENT.CENTER
+                hdr_fill = _template_header_fill(doc)
                 for ri, rc in enumerate(rows):
                     for ci in range(nc):
                         cell = t.cell(ri, ci)
                         cell.text = ""
                         _inline(cell.paragraphs[0], rc[ci] if ci < len(rc) else "")
                         if ri == 0:
-                            sh = parse_xml(f'<w:shd {nsdecls("w")} w:fill="E8F5E9"/>')
-                            cell._tc.get_or_add_tcPr().append(sh)
+                            if hdr_fill:
+                                sh = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{hdr_fill}"/>')
+                                cell._tc.get_or_add_tcPr().append(sh)
                             for r in cell.paragraphs[0].runs:
                                 r.bold = True
                 _table_keep_header_with_rows(t)
@@ -795,7 +902,7 @@ def _extract_headings(md_path: Path) -> list[tuple[int, str]]:
     if not md_path.exists():
         return []
     headings = []
-    text = md_path.read_text(encoding="utf-8")
+    text = _expand_snippets(md_path.read_text(encoding="utf-8"), md_path)
     in_comment = False
     skip_toc = False
     toc_level = 0
@@ -830,7 +937,8 @@ def _detect_manual_numbering(md_path: Path) -> bool:
     ("1.1. ...", "Часть 1 ..."). In that case automatic numbering is disabled."""
     if not md_path.exists():
         return False
-    for line in md_path.read_text(encoding="utf-8").split("\n"):
+    text = _expand_snippets(md_path.read_text(encoding="utf-8"), md_path)
+    for line in text.split("\n"):
         hm = re.match(r'^(#{2,6})\s+(.*)', line)
         if not hm:
             continue
@@ -842,7 +950,62 @@ def _detect_manual_numbering(md_path: Path) -> bool:
 
 # --- title page / revision / warning ---
 
+_TITLE_ROW_PLAN = (500, 3900, 2200, 850, 850, 700, 850)
+
+
+def _fit_title_page(doc):
+    """Keep the template's title table on one page when LibreOffice renders
+    the DOCX to PDF. LibreOffice grows rows beyond the declared minimums
+    (the logo is taller than its row), which pushes the version row onto a
+    second page. Force exact row heights sized to fit the printable area.
+
+    Current templates build the title from body SDTs (no table); only a
+    table found inside the title section (before the section break) is
+    reflowed.
+    """
+    body = doc.element.body
+    title_tbl = None
+    for el in body.iterchildren():
+        if el.tag == qn("w:tbl"):
+            title_tbl = el
+            break
+        if el.tag == qn("w:p") and el.find(qn("w:pPr")) is not None \
+                and el.find(qn("w:pPr")).find(qn("w:sectPr")) is not None:
+            break
+    if title_tbl is None:
+        return
+    for i, tr in enumerate(title_tbl.findall(qn("w:tr"))[: len(_TITLE_ROW_PLAN)]):
+        trPr = tr.find(qn("w:trPr"))
+        if trPr is None:
+            trPr = parse_xml(f'<w:trPr {nsdecls("w")}/>')
+            tr.insert(0, trPr)
+        trHeight = trPr.find(qn("w:trHeight"))
+        if trHeight is None:
+            trHeight = parse_xml(f'<w:trHeight {nsdecls("w")}/>')
+            trPr.append(trHeight)
+        trHeight.set(qn("w:val"), str(_TITLE_ROW_PLAN[i]))
+        trHeight.set(qn("w:hRule"), "exact")
+
+
 def _title_page(doc, product_name):
+    """Put the product name into the 'Название' SDT of the title block.
+
+    Falls back to the title-table rows for legacy templates that store the
+    name in a table cell instead of a body SDT.
+    """
+    for sdt in doc.element.body.iter(qn("w:sdt")):
+        alias_el = sdt.find(qn("w:sdtPr"))
+        if alias_el is None:
+            continue
+        alias = alias_el.find(qn("w:alias"))
+        if alias is None or alias.get(qn("w:val")) != "Название":
+            continue
+        content = sdt.find(qn("w:sdtContent"))
+        if content is None:
+            continue
+        for t_el in content.iter(qn("w:t")):
+            t_el.text = product_name
+        return
     if not doc.tables:
         return
     t = doc.tables[0]
@@ -860,33 +1023,54 @@ def _title_page(doc, product_name):
             t_el.text = product_name
         break
     else:
+        try:
+            h1 = doc.styles["Heading 1"]
+            size = h1.font.size
+            color = h1.font.color.rgb
+        except (KeyError, ValueError):
+            size, color = None, None
+        size = size or Pt(28)
         for row_idx in (2, 3):
             if row_idx >= len(t.rows):
                 continue
             for p in t.rows[row_idx].cells[0].paragraphs:
                 if p.text.strip():
                     p.clear()
-                    _add_run(p, product_name, size=Pt(32),
-                             color=RGBColor(0x80, 0xBC, 0x48))
+                    _add_run(p, product_name, size=size, color=color)
                     return
 
 
-def _revision(doc):
+def _update_revision_date(rev_tbl):
+    """Refresh the 'Дата' column of the template's revision table without
+    rebuilding the table (text/shape of the copy stays as it is in the
+    template)."""
+    if len(rev_tbl.rows) < 2 or len(rev_tbl.rows[1].cells) < 2:
+        return
+    cell = rev_tbl.rows[1].cells[1]
+    cell.text = ""
+    cell.paragraphs[0].add_run(datetime.date.today().strftime("%d.%m.%Y"))
+
+
+def _revision_fallback(doc):
+    """Only used when the template has no revision table of its own."""
     t = doc.add_table(rows=2, cols=4)
     t.style = "Table Grid"
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    hdr_fill = _template_header_fill(doc)
     for ci, h in enumerate(["Версия", "Дата", "Автор", "Описание"]):
         c = t.cell(0, ci)
         c.text = ""
         _add_run(c.paragraphs[0], h, bold=True)
-        c._tc.get_or_add_tcPr().append(parse_xml(f'<w:shd {nsdecls("w")} w:fill="E8F5E9"/>'))
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    for ci, d in enumerate(["1.0", today, "Система", "Начальная версия документа"]):
+        if hdr_fill:
+            c._tc.get_or_add_tcPr().append(parse_xml(f'<w:shd {nsdecls("w")} w:fill="{hdr_fill}"/>'))
+    today = datetime.date.today().strftime("%d.%m.%Y")
+    for ci, d in enumerate([_latest_doc_version(), today, "Система", "Начальная версия документа"]):
         t.cell(1, ci).text = ""
         t.cell(1, ci).paragraphs[0].add_run(d)
 
 
-def _warning(doc):
+def _warning_fallback(doc):
+    """Only used when the template has no 'Предупреждение' table of its own."""
     t = doc.add_table(rows=2, cols=1)
     t.style = "Table Grid"
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -894,13 +1078,262 @@ def _warning(doc):
     c0.text = ""
     _add_run(c0.paragraphs[0], "Предупреждение", bold=True, size=Pt(12),
              color=RGBColor(0xCC, 0, 0))
-    c0._tc.get_or_add_tcPr().append(parse_xml(f'<w:shd {nsdecls("w")} w:fill="FFEBEE"/>'))
     c1 = t.cell(1, 0)
     c1.text = ""
     _add_run(c1.paragraphs[0],
              "Данный документ является интеллектуальной собственностью. "
              "Все права защищены. Копирование и распространение без разрешения запрещено.",
              size=Pt(10))
+
+
+def _find_revision_table(doc):
+    for t in doc.tables:
+        if t.rows and t.rows[0].cells and t.rows[0].cells[0].text.strip() == "Версия":
+            return t
+    return None
+
+
+def _parse_release_notes() -> list[dict]:
+    """Parse docs/release-notes.md into a list of version dicts.
+
+    Each dict has: version, date, author, description.
+    """
+    text = (DOCS_ROOT / "docs" / "release-notes.md").read_text(encoding="utf-8")
+    versions = []
+    current = None
+    for line in text.splitlines():
+        m = re.match(r"^##\s+(\d+\.\d+\.\d+)", line)
+        if m:
+            if current is not None:
+                versions.append(current)
+            current = {"version": m.group(1), "date": "", "author": "", "description": ""}
+            continue
+        if current is None:
+            continue
+        am = re.match(r"^Автор:\s*(.+)", line)
+        if am:
+            current["author"] = am.group(1).strip()
+            continue
+        dm = re.match(r"^Дата:\s*(.+)", line)
+        if dm:
+            current["date"] = dm.group(1).strip()
+            continue
+        om = re.match(r"^Описание:\s*(.+)", line)
+        if om:
+            current["description"] = om.group(1).strip()
+            continue
+    if current is not None:
+        versions.append(current)
+    return versions
+
+
+def _latest_doc_version() -> str:
+    """Return the latest version from docs/release-notes.md (first ## X.Y.Z)."""
+    versions = _parse_release_notes()
+    return versions[0]["version"] if versions else "1.0"
+
+
+def _latest_doc_author() -> str:
+    """Return the author of the latest version from docs/release-notes.md."""
+    versions = _parse_release_notes()
+    if versions and versions[0].get("author"):
+        return versions[0]["author"]
+    return "Система"
+
+
+def _rebuild_revision_table(doc, versions: list[dict]):
+    """Clear data rows in the revision table and add one row per version."""
+    rev = _find_revision_table(doc)
+    if rev is None:
+        return
+    while len(rev.rows) > 1:
+        tr = rev.rows[1]._tr
+        tr.getparent().remove(tr)
+    for v in versions:
+        row = rev.add_row()
+        for ci, val in enumerate([v["version"], v["date"], v["author"], v["description"]]):
+            cell = row.cells[ci]
+            cell.text = ""
+            _add_run(cell.paragraphs[0], val)
+
+
+def _set_author_in_headers(doc, author: str):
+    """Add an author row to every header table (after the version row).
+
+    The version text lives in a block-level SDT inside a table cell (or in a
+    plain paragraph), so cells are matched via raw ``w:t`` text.
+    """
+    # Several content sections can share the same header part (python-docx
+    # returns the same part for linked/default headers of adjacent sections),
+    # so process each header XML element only once.
+    seen = set()
+    for section in doc.sections:
+        for part in (section.header, section.first_page_header, section.even_page_header):
+            if part is None or not part.tables:
+                continue
+            if part._element in seen:
+                continue
+            seen.add(part._element)
+            for table in part.tables:
+                version_row = None
+                for row in table.rows:
+                    txt = "".join(t.text or "" for t in row._tr.iter(qn("w:t")))
+                    if "Версия документа" in txt:
+                        version_row = row
+                        break
+                if version_row is None:
+                    continue
+                new_row = table.add_row()
+                version_row._tr.addnext(new_row._tr)
+                new_row.cells[0].text = ""
+                _add_run(new_row.cells[0].paragraphs[0], f"Автор: {author}")
+                if len(new_row.cells) > 1:
+                    new_row.cells[0].merge(new_row.cells[-1])
+                break
+
+
+def _set_doc_version(doc, version: str):
+    """Replace the placeholder version string across the document.
+
+    Updates the 'Аннотация' SDT (title page + headers), the cover-page
+    custom XML property, and the revision table's version cell.
+    """
+    if version == "1.0":
+        return
+    # Body SDTs (title page, headers)
+    for sdt in doc.element.body.iter(qn("w:sdt")):
+        _rewrite_sdt_text(sdt, "Аннотация", version)
+    # Header parts (right side of running header)
+    for section in doc.sections:
+        for part in (section.header, section.first_page_header, section.even_page_header):
+            if part is None:
+                continue
+            for sdt in part._element.iter(qn("w:sdt")):
+                _rewrite_sdt_text(sdt, "Аннотация", version)
+    # Cover-page custom XML property
+    try:
+        for part in doc.part.package.parts:
+            if getattr(part, "partname", "") != "/customXml/item1.xml":
+                continue
+            from lxml import etree as _etree
+            root = _etree.fromstring(part.blob)
+            ns = {"ns0": "http://schemas.microsoft.com/office/2006/coverPageProps"}
+            abstract = root.find("ns0:Abstract", ns)
+            if abstract is not None and "1.0" in (abstract.text or ""):
+                abstract.text = abstract.text.replace("1.0", version)
+                part._blob = _etree.tostring(root, xml_declaration=True,
+                                             encoding="UTF-8", standalone="yes")
+    except Exception:
+        pass
+    # Revision table – first data row, version column
+    rev = _find_revision_table(doc)
+    if rev and len(rev.rows) >= 2 and len(rev.rows[1].cells) >= 1:
+        cell = rev.rows[1].cells[0]
+        if cell.text.strip() == "1.0":
+            cell.text = ""
+            cell.paragraphs[0].add_run(version)
+
+
+def _rewrite_sdt_text(sdt, alias_name: str, version: str):
+    """Replace the version inside an SDT whose alias equals ``alias_name``.
+
+    The placeholder text can be split across several runs (e.g. the title
+    page stores it as "Версия документа – 1." + "0"), so the runs are
+    joined, the version is replaced, and the result is written back into
+    the first run.
+    """
+    alias_el = sdt.find(".//" + qn("w:alias"))
+    if alias_el is None or alias_el.get(qn("w:val")) != alias_name:
+        return
+    content = sdt.find(qn("w:sdtContent"))
+    if content is None:
+        return
+    t_els = list(content.iter(qn("w:t")))
+    if not t_els:
+        return
+    old = "".join(t.text or "" for t in t_els)
+    if "1.0" not in old:
+        return
+    new = old.replace("1.0", version)
+    t_els[0].text = new
+    t_els[0].set(qn("xml:space"), "preserve")
+    for t in t_els[1:]:
+        t.text = ""
+
+
+def _find_warning_table(doc):
+    for t in doc.tables:
+        if t.rows and t.rows[0].cells and t.rows[0].cells[0].text.strip() == "Предупреждение":
+            return t
+    return None
+
+
+_WARNING_TPL_XML: str | None = None
+_WARNING_TPL_LOADED = False
+
+
+def _template_warning_xml() -> str | None:
+    """Return the cached XML string of the template's 'Предупреждение' table,
+    or ``None`` when the template lacks it.  Loaded once per process."""
+    global _WARNING_TPL_XML, _WARNING_TPL_LOADED
+    if not _WARNING_TPL_LOADED:
+        _WARNING_TPL_LOADED = True
+        try:
+            tpl = Document(str(PRIMER_DOCX))
+            tw = _find_warning_table(tpl)
+            if tw is not None:
+                _WARNING_TPL_XML = etree.tostring(tw._tbl, encoding="unicode")
+        except Exception:
+            pass
+    return _WARNING_TPL_XML
+
+
+def _render_warning_table(doc, title: str, clines: list[str], md_rel: str, fig_cnt: list[int]):
+    """Insert a 'Предупреждение' table into *doc* whose XML structure comes
+    from the template, filled with the real MD admonition content.
+
+    The first row is the label (template header colour); the second row
+    receives the admonition body text.  When *title* equals the default
+    label 'Предупреждение' (i.e. no custom title in MD), the label cell
+    text is left untouched.
+    """
+    xml = _template_warning_xml()
+    if xml is None:
+        _warning_fallback(doc)
+        return
+
+    el = parse_xml(xml)
+    doc.element.body.find(qn("w:sectPr")).addprevious(el)
+    from docx.table import Table
+    t = Table(el, doc)
+    if len(t.rows) < 2:
+        return
+
+    # Optionally replace the label when the MD source provides a custom title
+    if title and title != "Предупреждение":
+        label_cell = t.rows[0].cells[0]
+        label_cell.text = ""
+        run = label_cell.paragraphs[0].add_run(title)
+        run.bold = True
+
+    body_cell = t.rows[1].cells[0]
+    body_cell.text = ""
+    first = True
+    for cl in clines:
+        ct = cl.strip()
+        if not ct:
+            continue
+        p = body_cell.paragraphs[0] if first else body_cell.add_paragraph()
+        _inline(p, ct, md_rel, fig_cnt)
+        first = False
+
+
+def _find_toc_sdt(doc):
+    for el in doc.element.body.iter(qn("w:sdt")):
+        for it in el.iter(qn("w:instrText")):
+            if it.text and it.text.strip().startswith("TOC"):
+                return el
+    return None
 
 
 # --- TOC field ---
@@ -922,6 +1355,146 @@ def _add_toc_field(doc):
     r5 = p.add_run()
     r5._element.append(parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="end"/>'))
     return p
+
+
+# --- TOC entries: real headings + page numbers ---
+
+_HEADING_STYLE_IDS = ("1", "2", "3")
+
+
+def _collect_heading_entries(doc):
+    """Return [(level, text), ...] for every Heading 1-3 paragraph in the
+    body, excluding the TOC field's own cached content (which lives inside
+    the sdt). Heading text is exactly what is rendered in the body — numbers
+    are already literal there ("1.1 Загрузка сотрудников")."""
+    entries = []
+    for p in doc.element.body.iter(qn("w:p")):
+        if any(a.tag == qn("w:sdt") for a in p.iterancestors()):
+            continue
+        pPr = p.find(qn("w:pPr"))
+        if pPr is None:
+            continue
+        st = pPr.find(qn("w:pStyle"))
+        if st is None or st.get(qn("w:val")) not in _HEADING_STYLE_IDS:
+            continue
+        text = "".join(t.text or "" for t in p.iter(qn("w:t"))).strip()
+        if text:
+            entries.append((int(st.get(qn("w:val"))), text))
+    return entries
+
+
+def _rebuild_toc_entries(doc, toc_pages=None):
+    """Replace the cached result of the template's TOC field with the real
+    headings of this document.
+
+    LibreOffice does not recompute TOC fields during ``--convert-to pdf`` —
+    it renders the cached field result, which in the template contains the
+    primer's example headings. So we write the correct entries ourselves.
+
+    ``toc_pages`` maps heading text -> page number; the mkdocs hook obtains
+    it from a first conversion pass. Without it the numbers are placeholders
+    (Word still updates the field because ``w:updateFields`` is set, so the
+    DOCX stays correct when opened in Word).
+    """
+    sdt = _find_toc_sdt(doc)
+    if sdt is None:
+        return []
+    content = sdt.find(qn("w:sdtContent"))
+    if content is None:
+        return []
+    paras = list(content.findall(qn("w:p")))
+    if len(paras) < 3:
+        return []
+
+    # The outer TOC field is: paragraph with an instrText "TOC ..." (holds the
+    # begin + separate fldChars and the first cached entry), then one paragraph
+    # per cached entry (each carries its own PAGEREF field), then the final
+    # paragraph holding the TOC field's trailing "end" fldChar.
+    begin_p = None
+    for p in paras:
+        if any((it.text or "").strip().startswith("TOC") for it in p.iter(qn("w:instrText"))):
+            begin_p = p
+            break
+    if begin_p is None:
+        return []
+    end_p = None
+    for p in reversed(paras):
+        if p is begin_p:
+            break
+        if "end" in [f.get(qn("w:fldCharType")) for f in p.iter(qn("w:fldChar"))]:
+            end_p = p
+            break
+    if end_p is None:
+        return []
+
+    templates = []
+    started = False
+    for p in paras:
+        if p is begin_p:
+            started = True
+            continue
+        if p is end_p:
+            break
+        if started:
+            templates.append(p)
+    if not templates:
+        return []
+    template_entry = copy.deepcopy(templates[0])
+
+    started = False
+    for p in list(content.findall(qn("w:p"))):
+        if p is begin_p:
+            started = True
+            continue
+        if p is end_p:
+            break
+        if started:
+            content.remove(p)
+
+    # Drop the cached first entry glued inside begin_p after the 'separate'.
+    for i, child in enumerate(list(begin_p)):
+        if child.tag != qn("w:r"):
+            continue
+        if any(f.get(qn("w:fldCharType")) == "separate" for f in child.findall(qn("w:fldChar"))):
+            for extra in list(begin_p)[i + 1:]:
+                begin_p.remove(extra)
+            break
+
+    entries = _collect_heading_entries(doc)
+    page_map = toc_pages or {}
+    last = "1"
+    for lvl, text in entries:
+        p = copy.deepcopy(template_entry)
+        for child in list(p):
+            if child.tag != qn("w:pPr"):
+                p.remove(child)
+        pPr = p.find(qn("w:pPr"))
+        if lvl > 1:
+            ind = parse_xml(f'<w:ind {nsdecls("w")} w:left="{(lvl - 1) * 567}"/>')
+            rPr = pPr.find(qn("w:rPr"))
+            if rPr is not None:
+                rPr.addprevious(ind)
+            else:
+                pPr.append(ind)
+        page = page_map.get(text)
+        if page is None:
+            page = last
+        last = str(page)
+        r_text = parse_xml(
+            f'<w:r {nsdecls("w")}><w:rPr><w:rStyle {nsdecls("w")} w:val="af0"/>'
+            f'<w:noProof {nsdecls("w")}/></w:rPr>'
+            f'<w:t {nsdecls("w")} xml:space="preserve">{_xml_escape(text)}</w:t></w:r>')
+        r_tab = parse_xml(
+            f'<w:r {nsdecls("w")}><w:rPr><w:noProof {nsdecls("w")}/>'
+            f'<w:webHidden {nsdecls("w")}/></w:rPr><w:tab {nsdecls("w")}/></w:r>')
+        r_num = parse_xml(
+            f'<w:r {nsdecls("w")}><w:rPr><w:noProof {nsdecls("w")}/>'
+            f'<w:webHidden {nsdecls("w")}/></w:rPr>'
+            f'<w:t {nsdecls("w")} xml:space="preserve">{last}</w:t></w:r>')
+        for rr in (r_text, r_tab, r_num):
+            p.append(rr)
+        end_p.addprevious(p)
+    return entries
 
 
 def _strip_heading_autonum(doc: Document):
@@ -946,38 +1519,124 @@ def _reset_global_counters():
     _MANUAL_HEADING_NUMS = False
 
 
-def _fresh_doc() -> Document:
-    doc = Document(str(PRIMER_DOCX))
-    for p in list(doc.paragraphs):
-        p._element.getparent().remove(p._element)
-    tables = list(doc.tables)
-    for t in reversed(tables[1:]):
-        t._element.getparent().remove(t._element)
-    for s in list(doc.element.body.findall(qn("w:sdt"))):
-        if s.getparent() is not None and s.getparent().tag != qn("w:tc"):
-            doc.element.body.remove(s)
-    return doc
+def _fresh_doc() -> tuple[Document, list]:
+    """Open the template and drop its example content, keeping only the
+    structural elements: the title table, the 'Изменения в документе' heading
+    with the revision table, and the TOC sdt.
 
+    The template's 'Предупреждение' table is intentionally NOT preserved
+    here: its text is only a fill-in sample and must not appear in generated
+    documents. Its XML is cached separately (see ``_template_warning_xml``)
+    and reused only when an MD admonition ``!!! warning`` is rendered.
 
-def _build_toc_from_headings(doc, headings: list[tuple[int, str]]):
-    """Insert a manual table of contents based on the extracted headings.
-
-    Uses Word TOC field so it auto-updates when opened in Word.
-    The headings from the MD are rendered with their numbers, and the TOC
-    field picks them up via outline levels.
+    Returns (doc, kept_elements) where kept_elements are the front-matter
+    blocks that should be placed into the content section after the title
+    page. Everything else in the template body is removed.
     """
-    _add_toc_field(doc)
+    doc = Document(str(PRIMER_DOCX))
+    body = doc.element.body
+    children = list(body)
+
+    rev_heading = rev_tbl = toc_sdt = None
+
+    # NOTE: use python-docx proxies (p.text / cell.text) for text detection:
+    # raw `itertext()` on the template's runs returns duplicated text, because
+    # of the parser artifact with w:lastRenderedPageBreak (a w:t child plus a
+    # copy attached to the run).
+    for p in doc.paragraphs:
+        if p.text.strip() == "Изменения в документе":
+            rev_heading = p._element
+            break
+
+    rev_tbl_obj = _find_revision_table(doc)
+    if rev_tbl_obj is not None:
+        rev_tbl = rev_tbl_obj._tbl
+
+    for el in children:
+        if el.tag != qn("w:sdt"):
+            continue
+        if any((it.text or "").strip().startswith("TOC") for it in el.iter(qn("w:instrText"))):
+            toc_sdt = el
+            break
+
+    kept = [k for k in (rev_heading, rev_tbl, toc_sdt) if k is not None]
+
+    # Everything before the first kept element is the title block (logo
+    # paragraphs, 'Название'/'Тема'/'Аннотация' SDTs, spacing). It must be
+    # preserved in place, otherwise the title page ends up with images but no
+    # text. kept (revision heading/table/TOC) is moved to the content section
+    # separately by _move_to_body_end().
+    boundary = min((children.index(k) for k in kept if k in children),
+                   default=len(children))
+    keep = set(kept) | {el for el in children[:boundary]}
+
+    for el in children:
+        if el.tag == qn("w:sectPr"):
+            continue
+        if el in keep:
+            continue
+        body.remove(el)
+
+    return doc, kept
 
 
-def generate(md_path: Path, output_dir: Path, product_name: str | None = None):
-    """Generate a DOCX from a single markdown file.
+def _move_to_body_end(doc, elements):
+    """Move front-matter elements after the section break so they belong to
+    the last (content) section, which gets the template header/footer."""
+    body = doc.element.body
+    sectPr = body.find(qn("w:sectPr"))
+    for el in elements:
+        body.remove(el)
+        sectPr.addprevious(el)
 
-    The TOC is built from the heading structure found inside the MD file.
+
+def _page_break_before(doc, el):
+    """Insert a page-break paragraph immediately before a given element."""
+    p = parse_xml(f'<w:p {nsdecls("w")}/>')
+    r = parse_xml(f'<w:r {nsdecls("w")}/>')
+    r.append(parse_xml(f'<w:br {nsdecls("w")} w:type="page"/>'))
+    p.append(r)
+    el.addprevious(p)
+    return p
+
+
+def _ensure_frontmatter(doc, product_name):
+    """Make sure revision and TOC blocks exist in the content section.
+
+    When the template provides them, they are used as-is (only the revision
+    date is refreshed). Fallbacks with hardcoded content are used only for
+    templates that lack the corresponding element.
+
+    The 'Предупреждение' table is intentionally NOT added here: it only
+    appears when the MD source actually contains a ``!!! warning`` admonition
+    (rendered via ``_render_warning_table`` using the template's table
+    structure with the real MD content).
+    """
+    rev = _find_revision_table(doc)
+    if rev is None:
+        _heading(doc, "Изменения в документе", 1, numbered=False)
+        _revision_fallback(doc)
+    else:
+        _update_revision_date(rev)
+
+    toc = _find_toc_sdt(doc)
+    if toc is None:
+        _heading(doc, "Содержание", 1, numbered=False)
+        _add_toc_field(doc)
+    else:
+        _page_break_before(doc, toc)
+
+
+def _prepare_docx(md_path: Path, product_name: str | None = None, toc_pages: dict | None = None):
+    """Build a finished DOCX document from a single markdown file.
+
+    Returns ``(document, content_hdr_rid, content_ftr_rid, toc_entries)`` so
+    the caller can either save it to disk or serialize it to bytes. Raises
+    ``FileNotFoundError`` when the markdown file does not exist.
     """
     global _MANUAL_HEADING_NUMS
     if not md_path.exists():
-        print(f"Error: MD file not found: {md_path}", file=sys.stderr)
-        sys.exit(1)
+        raise FileNotFoundError(f"MD file not found: {md_path}")
 
     if product_name is None:
         # Derive product name from the file's first H1
@@ -993,7 +1652,7 @@ def generate(md_path: Path, output_dir: Path, product_name: str | None = None):
     # Pass 1: scan for cross-reference anchors
     _reset_global_counters()
     _MANUAL_HEADING_NUMS = _detect_manual_numbering(md_path)
-    scan = _fresh_doc()
+    scan, _ = _fresh_doc()
     _ensure_heading_styles(scan)
     _init_numbering(scan)
     _render_md(md_path, 1, scan, fig_cnt, tbl_cnt)
@@ -1001,39 +1660,76 @@ def generate(md_path: Path, output_dir: Path, product_name: str | None = None):
     # Pass 2: real document
     _reset_global_counters()
     _MANUAL_HEADING_NUMS = _detect_manual_numbering(md_path)
-    doc = _fresh_doc()
+    doc, front_elems = _fresh_doc()
     _ensure_heading_styles(doc)
     _init_numbering(doc)
 
+    content_hdr_rid, content_ftr_rid = _capture_content_section_refs(doc)
+
     _title_page(doc, product_name)
+    _fit_title_page(doc)
     doc.add_section(WD_SECTION.NEW_PAGE)
-
-    _heading(doc, "Изменения в документе", 1, numbered=False)
-    _revision(doc)
-    _warning(doc)
-
-    _page_break(doc)
-
-    _heading(doc, "Содержание", 1, numbered=False)
-    _add_toc_field(doc)
+    _move_to_body_end(doc, front_elems)
+    _ensure_frontmatter(doc, product_name)
 
     _page_break(doc)
 
     # Render the MD content starting at heading level 1
     _render_md(md_path, 1, doc, fig_cnt, tbl_cnt)
 
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    stem = md_path.stem
-    docx_path = output_dir / f"{stem}.docx"
-
     doc.core_properties.title = product_name
     doc.core_properties.subject = "Руководство пользователя"
 
-    _add_footer(doc, datetime.date.today().year, product_name)
+    _add_footer(doc, product_name, content_hdr_rid, content_ftr_rid)
+    _set_doc_version(doc, _latest_doc_version())
+    versions = _parse_release_notes()
+    _rebuild_revision_table(doc, versions)
+    _set_author_in_headers(doc, _latest_doc_author())
     _strip_heading_autonum(doc)
     _enable_field_updates(doc)
+    toc_entries = _rebuild_toc_entries(doc, toc_pages)
 
+    return doc, content_hdr_rid, content_ftr_rid, toc_entries
+
+
+def render_docx_with_toc(md_path: Path, product_name: str | None = None,
+                         toc_pages: dict | None = None):
+    """Generate a DOCX from a single markdown file.
+
+    Returns ``(toc_entries, bytes)`` where ``toc_entries`` is the list of
+    ``(level, heading_text)`` written into the TOC field.
+    """
+    doc, _, _, toc_entries = _prepare_docx(md_path, product_name, toc_pages)
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    return toc_entries, buffer.getvalue()
+
+
+def render_docx_bytes(md_path: Path, product_name: str | None = None, toc_pages: dict | None = None) -> bytes:
+    """Generate a DOCX from a single markdown file and return it as bytes.
+
+    Keeps the document in memory so callers (e.g. the mkdocs PDF hook) can
+    convert it without ever writing a DOCX file to disk.
+    """
+    _, data = render_docx_with_toc(md_path, product_name, toc_pages)
+    return data
+
+
+def generate(md_path: Path, output_dir: Path, product_name: str | None = None):
+    """Generate a DOCX from a single markdown file and save it to disk.
+
+    The TOC is built from the heading structure found inside the MD file.
+    """
+    md_path = md_path.resolve()
+    if not md_path.exists():
+        print(f"Error: MD file not found: {md_path}", file=sys.stderr)
+        sys.exit(1)
+
+    doc, _, _, _ = _prepare_docx(md_path, product_name)
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    docx_path = output_dir / f"{md_path.stem}.docx"
     doc.save(str(docx_path))
     print(f"DOCX saved: {docx_path}")
 
