@@ -42,6 +42,7 @@
 import argparse
 import copy
 import datetime
+from xml.sax.saxutils import escape as _xml_escape
 import io
 import os
 import re
@@ -610,6 +611,58 @@ def _template_header_fill(doc) -> str | None:
     return None
 
 
+# --- pymdownx snippet expansion ---
+
+_SNIPPET_RE = re.compile(r'^--8<--\s+"([^"]+)"\s*$')
+
+
+def _expand_snippets(text: str, base: Path, _seen: set | None = None) -> str:
+    """Expand pymdownx snippet directives (``--8<-- "file.md"``) inline.
+
+    Snippet filenames are resolved the same way ``pymdownx.snippets`` does:
+    first relative to the current markdown file's directory, then against the
+    docs root and the ``docs/snippets`` folder. Expansion is recursive and
+    cycle-safe, so snippets that reference further snippets are expanded too.
+    """
+    if _seen is None:
+        _seen = set()
+    out_lines = []
+    for line in text.split("\n"):
+        m = _SNIPPET_RE.match(line)
+        if not m:
+            out_lines.append(line)
+            continue
+        name = m.group(1).strip()
+        found = None
+        for cand in (
+            base / name,
+            DOCS_ROOT / name,
+            DOCS_ROOT / "snippets" / name,
+            DOCS_ROOT / "docs" / name,
+            DOCS_ROOT / "docs" / "snippets" / name,
+        ):
+            try:
+                cand = cand.resolve()
+            except OSError:
+                continue
+            if cand.exists():
+                found = cand
+                break
+        if found is None:
+            out_lines.append(f"*[Сниппет не найден: {name}]*")
+            continue
+        if found in _seen:
+            out_lines.append(f"*[Рекурсивный сниппет: {name}]*")
+            continue
+        _seen.add(found)
+        try:
+            snippet = found.read_text(encoding="utf-8")
+            out_lines.append(_expand_snippets(snippet, found.parent, _seen))
+        finally:
+            _seen.discard(found)
+    return "\n".join(out_lines)
+
+
 def _render_md(md_path: Path, heading_base: int, doc, fig_cnt, tbl_cnt):
     global _CUR_MD, _HAS_MD_ANCHOR
     if not md_path.exists():
@@ -626,6 +679,7 @@ def _render_lines(lines, md_path: Path, heading_base: int, doc, fig_cnt, tbl_cnt
     global _CUR_MD, _HAS_MD_ANCHOR
     _CUR_MD = str(md_path.resolve())
     _HAS_MD_ANCHOR = False
+    lines = _expand_snippets("\n".join(lines), md_path).split("\n")
     first_h1 = skip_first_h1
     md_rel = str(md_path.parent.relative_to(DOCS_ROOT))
     i = 0
@@ -848,7 +902,7 @@ def _extract_headings(md_path: Path) -> list[tuple[int, str]]:
     if not md_path.exists():
         return []
     headings = []
-    text = md_path.read_text(encoding="utf-8")
+    text = _expand_snippets(md_path.read_text(encoding="utf-8"), md_path)
     in_comment = False
     skip_toc = False
     toc_level = 0
@@ -883,7 +937,8 @@ def _detect_manual_numbering(md_path: Path) -> bool:
     ("1.1. ...", "Часть 1 ..."). In that case automatic numbering is disabled."""
     if not md_path.exists():
         return False
-    for line in md_path.read_text(encoding="utf-8").split("\n"):
+    text = _expand_snippets(md_path.read_text(encoding="utf-8"), md_path)
+    for line in text.split("\n"):
         hm = re.match(r'^(#{2,6})\s+(.*)', line)
         if not hm:
             continue
@@ -894,6 +949,30 @@ def _detect_manual_numbering(md_path: Path) -> bool:
 
 
 # --- title page / revision / warning ---
+
+_TITLE_ROW_PLAN = (500, 3900, 2200, 850, 850, 700, 850)
+
+
+def _fit_title_page(doc):
+    """Keep the template's title table on one page when LibreOffice renders
+    the DOCX to PDF. LibreOffice grows rows beyond the declared minimums
+    (the logo is taller than its row), which pushes the version row onto a
+    second page. Force exact row heights sized to fit the printable area."""
+    if not doc.tables:
+        return
+    tbl = doc.tables[0]._tbl
+    for i, tr in enumerate(tbl.findall(qn("w:tr"))[: len(_TITLE_ROW_PLAN)]):
+        trPr = tr.find(qn("w:trPr"))
+        if trPr is None:
+            trPr = parse_xml(f'<w:trPr {nsdecls("w")}/>')
+            tr.insert(0, trPr)
+        trHeight = trPr.find(qn("w:trHeight"))
+        if trHeight is None:
+            trHeight = parse_xml(f'<w:trHeight {nsdecls("w")}/>')
+            trPr.append(trHeight)
+        trHeight.set(qn("w:val"), str(_TITLE_ROW_PLAN[i]))
+        trHeight.set(qn("w:hRule"), "exact")
+
 
 def _title_page(doc, product_name):
     if not doc.tables:
@@ -954,7 +1033,7 @@ def _revision_fallback(doc):
         if hdr_fill:
             c._tc.get_or_add_tcPr().append(parse_xml(f'<w:shd {nsdecls("w")} w:fill="{hdr_fill}"/>'))
     today = datetime.date.today().strftime("%d.%m.%Y")
-    for ci, d in enumerate(["1.0", today, "Система", "Начальная версия документа"]):
+    for ci, d in enumerate([_latest_doc_version(), today, "Система", "Начальная версия документа"]):
         t.cell(1, ci).text = ""
         t.cell(1, ci).paragraphs[0].add_run(d)
 
@@ -981,6 +1060,83 @@ def _find_revision_table(doc):
         if t.rows and t.rows[0].cells and t.rows[0].cells[0].text.strip() == "Версия":
             return t
     return None
+
+
+def _latest_doc_version() -> str:
+    """Return the latest version from docs/release-notes.md (first ## X.Y.Z)."""
+    m = re.search(r"^##\s+(\d+\.\d+\.\d+)",
+                  (DOCS_ROOT / "docs" / "release-notes.md").read_text(encoding="utf-8"),
+                  re.M)
+    return m.group(1) if m else "1.0"
+
+
+def _set_doc_version(doc, version: str):
+    """Replace the placeholder version string across the document.
+
+    Updates the 'Аннотация' SDT (title page + headers), the cover-page
+    custom XML property, and the revision table's version cell.
+    """
+    if version == "1.0":
+        return
+    # Body SDTs (title page, headers)
+    for sdt in doc.element.body.iter(qn("w:sdt")):
+        _rewrite_sdt_text(sdt, "Аннотация", version)
+    # Header parts (right side of running header)
+    for section in doc.sections:
+        for part in (section.header, section.first_page_header, section.even_page_header):
+            if part is None:
+                continue
+            for sdt in part._element.iter(qn("w:sdt")):
+                _rewrite_sdt_text(sdt, "Аннотация", version)
+    # Cover-page custom XML property
+    try:
+        for part in doc.part.package.parts:
+            if getattr(part, "partname", "") != "/customXml/item1.xml":
+                continue
+            from lxml import etree as _etree
+            root = _etree.fromstring(part.blob)
+            ns = {"ns0": "http://schemas.microsoft.com/office/2006/coverPageProps"}
+            abstract = root.find("ns0:Abstract", ns)
+            if abstract is not None and "1.0" in (abstract.text or ""):
+                abstract.text = abstract.text.replace("1.0", version)
+                part._blob = _etree.tostring(root, xml_declaration=True,
+                                             encoding="UTF-8", standalone="yes")
+    except Exception:
+        pass
+    # Revision table – first data row, version column
+    rev = _find_revision_table(doc)
+    if rev and len(rev.rows) >= 2 and len(rev.rows[1].cells) >= 1:
+        cell = rev.rows[1].cells[0]
+        if cell.text.strip() == "1.0":
+            cell.text = ""
+            cell.paragraphs[0].add_run(version)
+
+
+def _rewrite_sdt_text(sdt, alias_name: str, version: str):
+    """Replace the version inside an SDT whose alias equals ``alias_name``.
+
+    The placeholder text can be split across several runs (e.g. the title
+    page stores it as "Версия документа – 1." + "0"), so the runs are
+    joined, the version is replaced, and the result is written back into
+    the first run.
+    """
+    alias_el = sdt.find(".//" + qn("w:alias"))
+    if alias_el is None or alias_el.get(qn("w:val")) != alias_name:
+        return
+    content = sdt.find(qn("w:sdtContent"))
+    if content is None:
+        return
+    t_els = list(content.iter(qn("w:t")))
+    if not t_els:
+        return
+    old = "".join(t.text or "" for t in t_els)
+    if "1.0" not in old:
+        return
+    new = old.replace("1.0", version)
+    t_els[0].text = new
+    t_els[0].set(qn("xml:space"), "preserve")
+    for t in t_els[1:]:
+        t.text = ""
 
 
 def _find_warning_table(doc):
@@ -1077,6 +1233,146 @@ def _add_toc_field(doc):
     r5 = p.add_run()
     r5._element.append(parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="end"/>'))
     return p
+
+
+# --- TOC entries: real headings + page numbers ---
+
+_HEADING_STYLE_IDS = ("1", "2", "3")
+
+
+def _collect_heading_entries(doc):
+    """Return [(level, text), ...] for every Heading 1-3 paragraph in the
+    body, excluding the TOC field's own cached content (which lives inside
+    the sdt). Heading text is exactly what is rendered in the body — numbers
+    are already literal there ("1.1 Загрузка сотрудников")."""
+    entries = []
+    for p in doc.element.body.iter(qn("w:p")):
+        if any(a.tag == qn("w:sdt") for a in p.iterancestors()):
+            continue
+        pPr = p.find(qn("w:pPr"))
+        if pPr is None:
+            continue
+        st = pPr.find(qn("w:pStyle"))
+        if st is None or st.get(qn("w:val")) not in _HEADING_STYLE_IDS:
+            continue
+        text = "".join(t.text or "" for t in p.iter(qn("w:t"))).strip()
+        if text:
+            entries.append((int(st.get(qn("w:val"))), text))
+    return entries
+
+
+def _rebuild_toc_entries(doc, toc_pages=None):
+    """Replace the cached result of the template's TOC field with the real
+    headings of this document.
+
+    LibreOffice does not recompute TOC fields during ``--convert-to pdf`` —
+    it renders the cached field result, which in the template contains the
+    primer's example headings. So we write the correct entries ourselves.
+
+    ``toc_pages`` maps heading text -> page number; the mkdocs hook obtains
+    it from a first conversion pass. Without it the numbers are placeholders
+    (Word still updates the field because ``w:updateFields`` is set, so the
+    DOCX stays correct when opened in Word).
+    """
+    sdt = _find_toc_sdt(doc)
+    if sdt is None:
+        return []
+    content = sdt.find(qn("w:sdtContent"))
+    if content is None:
+        return []
+    paras = list(content.findall(qn("w:p")))
+    if len(paras) < 3:
+        return []
+
+    # The outer TOC field is: paragraph with an instrText "TOC ..." (holds the
+    # begin + separate fldChars and the first cached entry), then one paragraph
+    # per cached entry (each carries its own PAGEREF field), then the final
+    # paragraph holding the TOC field's trailing "end" fldChar.
+    begin_p = None
+    for p in paras:
+        if any((it.text or "").strip().startswith("TOC") for it in p.iter(qn("w:instrText"))):
+            begin_p = p
+            break
+    if begin_p is None:
+        return []
+    end_p = None
+    for p in reversed(paras):
+        if p is begin_p:
+            break
+        if "end" in [f.get(qn("w:fldCharType")) for f in p.iter(qn("w:fldChar"))]:
+            end_p = p
+            break
+    if end_p is None:
+        return []
+
+    templates = []
+    started = False
+    for p in paras:
+        if p is begin_p:
+            started = True
+            continue
+        if p is end_p:
+            break
+        if started:
+            templates.append(p)
+    if not templates:
+        return []
+    template_entry = copy.deepcopy(templates[0])
+
+    started = False
+    for p in list(content.findall(qn("w:p"))):
+        if p is begin_p:
+            started = True
+            continue
+        if p is end_p:
+            break
+        if started:
+            content.remove(p)
+
+    # Drop the cached first entry glued inside begin_p after the 'separate'.
+    for i, child in enumerate(list(begin_p)):
+        if child.tag != qn("w:r"):
+            continue
+        if any(f.get(qn("w:fldCharType")) == "separate" for f in child.findall(qn("w:fldChar"))):
+            for extra in list(begin_p)[i + 1:]:
+                begin_p.remove(extra)
+            break
+
+    entries = _collect_heading_entries(doc)
+    page_map = toc_pages or {}
+    last = "1"
+    for lvl, text in entries:
+        p = copy.deepcopy(template_entry)
+        for child in list(p):
+            if child.tag != qn("w:pPr"):
+                p.remove(child)
+        pPr = p.find(qn("w:pPr"))
+        if lvl > 1:
+            ind = parse_xml(f'<w:ind {nsdecls("w")} w:left="{(lvl - 1) * 567}"/>')
+            rPr = pPr.find(qn("w:rPr"))
+            if rPr is not None:
+                rPr.addprevious(ind)
+            else:
+                pPr.append(ind)
+        page = page_map.get(text)
+        if page is None:
+            page = last
+        last = str(page)
+        r_text = parse_xml(
+            f'<w:r {nsdecls("w")}><w:rPr><w:rStyle {nsdecls("w")} w:val="af0"/>'
+            f'<w:noProof {nsdecls("w")}/></w:rPr>'
+            f'<w:t {nsdecls("w")} xml:space="preserve">{_xml_escape(text)}</w:t></w:r>')
+        r_tab = parse_xml(
+            f'<w:r {nsdecls("w")}><w:rPr><w:noProof {nsdecls("w")}/>'
+            f'<w:webHidden {nsdecls("w")}/></w:rPr><w:tab {nsdecls("w")}/></w:r>')
+        r_num = parse_xml(
+            f'<w:r {nsdecls("w")}><w:rPr><w:noProof {nsdecls("w")}/>'
+            f'<w:webHidden {nsdecls("w")}/></w:rPr>'
+            f'<w:t {nsdecls("w")} xml:space="preserve">{last}</w:t></w:r>')
+        for rr in (r_text, r_tab, r_num):
+            p.append(rr)
+        end_p.addprevious(p)
+    return entries
 
 
 def _strip_heading_autonum(doc: Document):
@@ -1200,15 +1496,16 @@ def _ensure_frontmatter(doc, product_name):
         _page_break_before(doc, toc)
 
 
-def generate(md_path: Path, output_dir: Path, product_name: str | None = None):
-    """Generate a DOCX from a single markdown file.
+def _prepare_docx(md_path: Path, product_name: str | None = None, toc_pages: dict | None = None):
+    """Build a finished DOCX document from a single markdown file.
 
-    The TOC is built from the heading structure found inside the MD file.
+    Returns ``(document, content_hdr_rid, content_ftr_rid, toc_entries)`` so
+    the caller can either save it to disk or serialize it to bytes. Raises
+    ``FileNotFoundError`` when the markdown file does not exist.
     """
     global _MANUAL_HEADING_NUMS
     if not md_path.exists():
-        print(f"Error: MD file not found: {md_path}", file=sys.stderr)
-        sys.exit(1)
+        raise FileNotFoundError(f"MD file not found: {md_path}")
 
     if product_name is None:
         # Derive product name from the file's first H1
@@ -1239,6 +1536,7 @@ def generate(md_path: Path, output_dir: Path, product_name: str | None = None):
     content_hdr_rid, content_ftr_rid = _capture_content_section_refs(doc)
 
     _title_page(doc, product_name)
+    _fit_title_page(doc)
     doc.add_section(WD_SECTION.NEW_PAGE)
     _move_to_body_end(doc, front_elems)
     _ensure_frontmatter(doc, product_name)
@@ -1248,18 +1546,56 @@ def generate(md_path: Path, output_dir: Path, product_name: str | None = None):
     # Render the MD content starting at heading level 1
     _render_md(md_path, 1, doc, fig_cnt, tbl_cnt)
 
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    stem = md_path.stem
-    docx_path = output_dir / f"{stem}.docx"
-
     doc.core_properties.title = product_name
     doc.core_properties.subject = "Руководство пользователя"
 
     _add_footer(doc, product_name, content_hdr_rid, content_ftr_rid)
+    _set_doc_version(doc, _latest_doc_version())
     _strip_heading_autonum(doc)
     _enable_field_updates(doc)
+    toc_entries = _rebuild_toc_entries(doc, toc_pages)
 
+    return doc, content_hdr_rid, content_ftr_rid, toc_entries
+
+
+def render_docx_with_toc(md_path: Path, product_name: str | None = None,
+                         toc_pages: dict | None = None):
+    """Generate a DOCX from a single markdown file.
+
+    Returns ``(toc_entries, bytes)`` where ``toc_entries`` is the list of
+    ``(level, heading_text)`` written into the TOC field.
+    """
+    doc, _, _, toc_entries = _prepare_docx(md_path, product_name, toc_pages)
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    return toc_entries, buffer.getvalue()
+
+
+def render_docx_bytes(md_path: Path, product_name: str | None = None, toc_pages: dict | None = None) -> bytes:
+    """Generate a DOCX from a single markdown file and return it as bytes.
+
+    Keeps the document in memory so callers (e.g. the mkdocs PDF hook) can
+    convert it without ever writing a DOCX file to disk.
+    """
+    _, data = render_docx_with_toc(md_path, product_name, toc_pages)
+    return data
+
+
+def generate(md_path: Path, output_dir: Path, product_name: str | None = None):
+    """Generate a DOCX from a single markdown file and save it to disk.
+
+    The TOC is built from the heading structure found inside the MD file.
+    """
+    md_path = md_path.resolve()
+    if not md_path.exists():
+        print(f"Error: MD file not found: {md_path}", file=sys.stderr)
+        sys.exit(1)
+
+    doc, _, _, _ = _prepare_docx(md_path, product_name)
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    docx_path = output_dir / f"{md_path.stem}.docx"
     doc.save(str(docx_path))
     print(f"DOCX saved: {docx_path}")
 

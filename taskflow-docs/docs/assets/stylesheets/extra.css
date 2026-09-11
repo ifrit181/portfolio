@@ -1,114 +1,197 @@
-/* --- Осенняя тематика TaskFlow: harvest palette ---
-   Эспрессо-коричневый, терракота, тёплый янтарь и крем.
-   Ориентиры: «rustic» палитры W3Schools (#7e4a35, #cab577, #dbceb0),
-   доработаны под мягкую, приятную для чтения гамму. */
+/* --- TaskFlow: спокойная осень (neutral autumn) ---
+   Приглушённая терракота, пыльный мёд, тёплый крем.
+   Низкая насыщенность, один акцент. */
 
 /* Светлая схема */
 [data-md-color-scheme="default"] {
-  --md-primary-fg-color: #b4491f;
-  --md-primary-fg-color--light: #d97c4a;
-  --md-primary-fg-color--dark: #8a2f14;
-  --md-accent-fg-color: #d89a3c;
-  --md-accent-fg-color--transparent: rgba(216, 154, 60, 0.12);
-  --md-default-fg-color: #3b2418;
-  --md-default-fg-color--light: #6f4e36;
-  --md-default-fg-color--lighter: #a0856b;
-  --md-default-bg-color: #faf5e9;
-  --md-default-bg-color--light: #fffdf5;
-  --md-default-bg-color--lighter: #f3ead6;
-  --md-code-bg-color: #f4ebd8;
-  --md-code-fg-color: #7a3213;
-  --md-typeset-a-color: #b4491f;
-  --md-typeset-mark-color: rgba(216, 154, 60, 0.4);
-  --md-footer-bg-color: #2a170d;
-  --md-footer-fg-color: #f6ebd9;
+  --md-primary-fg-color: #9C5B45;
+  --md-primary-fg-color--light: #B87A63;
+  --md-primary-fg-color--dark: #7A4132;
+
+  --md-accent-fg-color: #B8894D;
+  --md-accent-fg-color--transparent: rgba(184, 137, 77, 0.12);
+
+  --md-default-fg-color: #2E2B27;
+  --md-default-fg-color--light: #5A544C;
+  --md-default-fg-color--lighter: #8C8578;
+
+  --md-default-bg-color: #FAF8F4;
+  --md-default-bg-color--light: #FFFFFF;
+  --md-default-bg-color--lighter: #F0EBE1;
+
+  --md-code-bg-color: #F1ECE3;
+  --md-code-fg-color: #6B3A28;
+
+  --md-typeset-a-color: #9C5B45;
+  --md-typeset-mark-color: rgba(184, 137, 77, 0.35);
+
+  --md-footer-bg-color: #2A2520;
+  --md-footer-fg-color: #E8E2D6;
 }
 
 /* Тёмная схема */
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color: #d89a3c;
-  --md-primary-fg-color--light: #f0be6e;
-  --md-primary-fg-color--dark: #a9742b;
-  --md-accent-fg-color: #e9b45b;
-  --md-accent-fg-color--transparent: rgba(233, 180, 91, 0.15);
-  --md-default-fg-color: #f1e4cd;
-  --md-default-fg-color--light: #c4ad8d;
-  --md-default-bg-color: #22130c;
-  --md-default-bg-color--light: #2b1a11;
-  --md-code-bg-color: #2f1d13;
-  --md-code-fg-color: #f0c07f;
-  --md-typeset-a-color: #e9b45b;
-  --md-typeset-mark-color: rgba(169, 116, 43, 0.5);
-  --md-footer-bg-color: #150b05;
-  --md-footer-fg-color: #d6c2a4;
+  --md-primary-fg-color: #C99A6D;
+  --md-primary-fg-color--light: #D9B587;
+  --md-primary-fg-color--dark: #A87A52;
+
+  --md-accent-fg-color: #D9B587;
+  --md-accent-fg-color--transparent: rgba(217, 181, 135, 0.14);
+
+  --md-default-fg-color: #E8E2D6;
+  --md-default-fg-color--light: #A89E8E;
+  --md-default-fg-color--lighter: #6F685C;
+
+  --md-default-bg-color: #1C1916;
+  --md-default-bg-color--light: #25221E;
+  --md-default-bg-color--lighter: #2A2620;
+
+  --md-code-bg-color: #2A2620;
+  --md-code-fg-color: #E0B87A;
+
+  --md-typeset-a-color: #C99A6D;
+  --md-typeset-mark-color: rgba(217, 181, 135, 0.4);
+
+  --md-footer-bg-color: #141210;
+  --md-footer-fg-color: #A89E8E;
 }
 
-/* Шапка сайта: тёплый янтарный градиент */
+/* Шапка: очень мягкий градиент между двумя близкими оттенками */
 .md-header {
-  background: linear-gradient(90deg, #7e2b14 0%, #b4491f 55%, #d89a3c 100%);
+  background: linear-gradient(90deg, #7A4132 0%, #9C5B45 100%);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
 [data-md-color-scheme="slate"] .md-header {
-  background: linear-gradient(90deg, #5a2410 0%, #7e3b17 45%, #a9742b 100%);
+  background: linear-gradient(90deg, #2A2520 0%, #3A322A 100%);
 }
 
-/* Табы и активные элементы навигации */
+/* Табы */
 .md-tabs {
-  background: rgba(142, 51, 24, 0.45);
+  background: rgba(122, 65, 50, 0.65);
 }
 
 [data-md-color-scheme="slate"] .md-tabs {
-  background: rgba(126, 59, 23, 0.5);
+  background: rgba(42, 37, 32, 0.7);
 }
 
-/* Заголовки страницы в тёплом коричневом */
-.md-content h1,
-.md-content h2,
-.md-content h3,
-.md-content h4 {
-  color: #8a2f14;
+/* Заголовки — тёплый коричневый, не красный */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  color: #6B4030;
+  font-weight: 500;
 }
 
-[data-md-color-scheme="slate"] .md-content h1,
-[data-md-color-scheme="slate"] .md-content h2,
-[data-md-color-scheme="slate"] .md-content h3,
-[data-md-color-scheme="slate"] .md-content h4 {
-  color: #e9b45b;
+.md-typeset h1 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-/* Подложка шапок таблиц */
+[data-md-color-scheme="slate"] .md-typeset h1,
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3,
+[data-md-color-scheme="slate"] .md-typeset h4 {
+  color: #E0BB8A;
+}
+
+/* Таблицы — мягкий фон шапки, без лимонного */
+.md-typeset table:not([class]) {
+  border: 1px solid #E5DDD0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
 .md-typeset table:not([class]) th {
-  background-color: #ecd3a8;
-  color: #4a2b17;
+  background-color: #EFE6D5;
+  color: #4A3A2E;
+  font-weight: 600;
+  border-bottom: 1px solid #E5DDD0;
+}
+
+.md-typeset table:not([class]) tr:nth-child(even) {
+  background-color: rgba(239, 230, 213, 0.35);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
+  border-color: #3A322A;
 }
 
 [data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
-  background-color: #5e3118;
-  color: #f1e4cd;
+  background-color: #3A322A;
+  color: #E8E2D6;
+  border-bottom-color: #4A4038;
 }
 
-/* Цвет выделения текста */
-::selection {
-  background-color: rgba(216, 154, 60, 0.32);
-}
-
-/* Тёплый скроллбар */
-* {
-  scrollbar-color: #d89a3c rgba(0, 0, 0, 0.12);
-}
-
-/* Блоки кода в тёплых тонах */
+/* Блоки кода — тонкая рамка, без ярких акцентов */
 .md-typeset pre > code,
 .md-typeset .highlight {
-  border: 1px solid rgba(138, 47, 20, 0.18);
+  border: 1px solid rgba(122, 65, 50, 0.15);
+  border-radius: 6px;
 }
 
 [data-md-color-scheme="slate"] .md-typeset pre > code,
 [data-md-color-scheme="slate"] .md-typeset .highlight {
-  border-color: rgba(233, 180, 91, 0.2);
+  border-color: rgba(217, 181, 135, 0.15);
 }
 
-/* Ссылки в подвалe */
+/* Выделение текста */
+::selection {
+  background-color: rgba(184, 137, 77, 0.3);
+}
+
+/* Скроллбар */
+* {
+  scrollbar-color: #B8894D rgba(0, 0, 0, 0.08);
+}
+
+/* Admonition — мягкие нейтральные блоки */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 6px;
+  border-left-width: 3px;
+  box-shadow: none;
+}
+
+/* Кнопка PDF */
+.md-download-btn {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  color: #FFFFFF;
+  background: #9C5B45;
+  box-shadow: 0 4px 14px rgba(58, 30, 12, 0.22);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.md-download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(58, 30, 12, 0.3);
+  background: #B87A63;
+}
+
+.md-download-btn[hidden] { display: none; }
+
+[data-md-color-scheme="slate"] .md-download-btn {
+  background: #C99A6D;
+  color: #1C1916;
+}
+
+[data-md-color-scheme="slate"] .md-download-btn:hover {
+  background: #D9B587;
+}
+
+/* Подвал */
 .md-footer__link {
-  color: #f6ebd9;
+  color: #E8E2D6;
 }

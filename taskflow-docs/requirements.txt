@@ -5,3 +5,4 @@ mkdocs-glightbox
 mkdocs-git-revision-date-localized-plugin
 mkdocs-minify-plugin
 htmlmin
+pypdf

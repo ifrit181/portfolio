@@ -9,6 +9,7 @@ repo_url: "https://github.com/example/taskflow-docs"
 theme:
   name: material
   language: ru
+  custom_dir: overrides
   logo: assets/logo/logo.png
   favicon: assets/logo/logo.png
   palette:
@@ -37,6 +38,9 @@ theme:
 
 extra_css:
   - assets/stylesheets/extra.css
+
+extra_javascript:
+  - assets/javascripts/download-pdf.js
 
 markdown_extensions:
   - pymdownx.snippets:
@@ -70,6 +74,9 @@ plugins:
       minify_js: true
       minify_css: true
 
+hooks:
+  - hooks/generate_pdf.py
+
 nav:
   - Главная: index.md
   - Начало работы:
@@ -86,6 +93,7 @@ nav:
   - API: api/reference.md
   - Блог: blog/index.md
   - Теги: tags.md
+  - Скачать в PDF: pdf.md
   - FAQ: faq.md
   - Release notes: release-notes.md
   - Глоссарий: glossary.md
