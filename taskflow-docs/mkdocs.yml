@@ -50,6 +50,11 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - admonition
   - pymdownx.details
   - tables
@@ -91,9 +96,10 @@ nav:
       - Пользователи: admin-guide/users.md
       - Настройки: admin-guide/settings.md
   - API: api/reference.md
-  - Блог: blog/index.md
   - Теги: tags.md
-  - Скачать в PDF: pdf.md
+  - Документация в PDF:
+      - Скачать в PDF: pdf.md
+      - Требования к оформлению: requirements.md
   - FAQ: faq.md
   - Release notes: release-notes.md
   - Глоссарий: glossary.md

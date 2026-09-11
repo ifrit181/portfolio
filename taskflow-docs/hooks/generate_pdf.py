@@ -19,7 +19,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from pypdf import PdfReader
+from pypdf import PdfReader, PdfWriter
 
 LOGGER = logging.getLogger("mkdocs")
 
@@ -83,6 +83,9 @@ def _to_pdf(docx_path: Path, out_dir: Path, profile_dir: Path) -> Path:
     return pdf
 
 
+_MASK_INVERT = bytes(0xFF - b for b in range(256))
+
+
 def _extract_heading_pages(pdf_path: Path, entries) -> dict:
     """Map heading text -> 1-based PDF page number.
 
@@ -119,6 +122,54 @@ def _extract_heading_pages(pdf_path: Path, entries) -> dict:
             last_page = str(found)
         mapping[text] = last_page
     return mapping
+
+
+def _fix_soft_masks(pdf_path: Path) -> Path:
+    """Make image transparency render correctly in every PDF viewer.
+
+    LibreOffice stores translucent PNGs on the cover as JPEG (DCTDecode) plus a
+    grayscale soft mask carrying /Decode [1 0]. Several viewers mishandle
+    /Decode on soft masks and paint the transparent areas black. Rewrite such
+    masks without /Decode, inverting the samples so the rendered result is
+    byte-for-byte identical in correct renderers and the ones that would have
+    failed are fixed too.
+    """
+    writer = PdfWriter(clone_from=str(pdf_path))
+    changed = 0
+    for page in writer.pages:
+        res = page.get("/Resources")
+        xobjs = (res.get("/XObject") if res else {}) or {}
+        for ref in xobjs.values():
+            xobj = ref.get_object()
+            if xobj.get("/Subtype") != "/Image":
+                continue
+            sm_ref = xobj.get("/SMask")
+            if sm_ref is None:
+                continue
+            sm = sm_ref.get_object()
+            if "/Decode" not in sm:
+                continue
+            decode = list(sm.get("/Decode"))
+            if tuple(round(float(v), 3) for v in decode) != (1.0, 0.0):
+                continue
+            width, height = int(sm.get("/Width")), int(sm.get("/Height"))
+            data = sm.get_data()
+            if len(data) != width * height:
+                LOGGER.warning(
+                    "generate_pdf: unexpected soft-mask size in %s, skipped",
+                    pdf_path.name,
+                )
+                continue
+            sm.set_data(data.translate(_MASK_INVERT))
+            sm.pop("/Decode", None)
+            changed += 1
+    if not changed:
+        return pdf_path
+    LOGGER.info("generate_pdf: normalised %d soft masks in %s", changed, pdf_path.name)
+    fixed = pdf_path.with_name(pdf_path.stem + ".fixed.pdf")
+    with fixed.open("wb") as fh:
+        writer.write(fh)
+    return fixed
 
 
 def on_post_build(config):
@@ -179,6 +230,7 @@ def on_post_build(config):
 
             try:
                 pdf = _to_pdf(docx_path, pdfs_dir, profile)
+                pdf = _fix_soft_masks(pdf)
             except Exception as exc:
                 LOGGER.warning("generate_pdf: PDF failed for %s: %s", src, exc)
                 continue

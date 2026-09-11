@@ -957,11 +957,24 @@ def _fit_title_page(doc):
     """Keep the template's title table on one page when LibreOffice renders
     the DOCX to PDF. LibreOffice grows rows beyond the declared minimums
     (the logo is taller than its row), which pushes the version row onto a
-    second page. Force exact row heights sized to fit the printable area."""
-    if not doc.tables:
+    second page. Force exact row heights sized to fit the printable area.
+
+    Current templates build the title from body SDTs (no table); only a
+    table found inside the title section (before the section break) is
+    reflowed.
+    """
+    body = doc.element.body
+    title_tbl = None
+    for el in body.iterchildren():
+        if el.tag == qn("w:tbl"):
+            title_tbl = el
+            break
+        if el.tag == qn("w:p") and el.find(qn("w:pPr")) is not None \
+                and el.find(qn("w:pPr")).find(qn("w:sectPr")) is not None:
+            break
+    if title_tbl is None:
         return
-    tbl = doc.tables[0]._tbl
-    for i, tr in enumerate(tbl.findall(qn("w:tr"))[: len(_TITLE_ROW_PLAN)]):
+    for i, tr in enumerate(title_tbl.findall(qn("w:tr"))[: len(_TITLE_ROW_PLAN)]):
         trPr = tr.find(qn("w:trPr"))
         if trPr is None:
             trPr = parse_xml(f'<w:trPr {nsdecls("w")}/>')
@@ -975,6 +988,24 @@ def _fit_title_page(doc):
 
 
 def _title_page(doc, product_name):
+    """Put the product name into the 'Название' SDT of the title block.
+
+    Falls back to the title-table rows for legacy templates that store the
+    name in a table cell instead of a body SDT.
+    """
+    for sdt in doc.element.body.iter(qn("w:sdt")):
+        alias_el = sdt.find(qn("w:sdtPr"))
+        if alias_el is None:
+            continue
+        alias = alias_el.find(qn("w:alias"))
+        if alias is None or alias.get(qn("w:val")) != "Название":
+            continue
+        content = sdt.find(qn("w:sdtContent"))
+        if content is None:
+            continue
+        for t_el in content.iter(qn("w:t")):
+            t_el.text = product_name
+        return
     if not doc.tables:
         return
     t = doc.tables[0]
@@ -1062,12 +1093,103 @@ def _find_revision_table(doc):
     return None
 
 
+def _parse_release_notes() -> list[dict]:
+    """Parse docs/release-notes.md into a list of version dicts.
+
+    Each dict has: version, date, author, description.
+    """
+    text = (DOCS_ROOT / "docs" / "release-notes.md").read_text(encoding="utf-8")
+    versions = []
+    current = None
+    for line in text.splitlines():
+        m = re.match(r"^##\s+(\d+\.\d+\.\d+)", line)
+        if m:
+            if current is not None:
+                versions.append(current)
+            current = {"version": m.group(1), "date": "", "author": "", "description": ""}
+            continue
+        if current is None:
+            continue
+        am = re.match(r"^Автор:\s*(.+)", line)
+        if am:
+            current["author"] = am.group(1).strip()
+            continue
+        dm = re.match(r"^Дата:\s*(.+)", line)
+        if dm:
+            current["date"] = dm.group(1).strip()
+            continue
+        om = re.match(r"^Описание:\s*(.+)", line)
+        if om:
+            current["description"] = om.group(1).strip()
+            continue
+    if current is not None:
+        versions.append(current)
+    return versions
+
+
 def _latest_doc_version() -> str:
     """Return the latest version from docs/release-notes.md (first ## X.Y.Z)."""
-    m = re.search(r"^##\s+(\d+\.\d+\.\d+)",
-                  (DOCS_ROOT / "docs" / "release-notes.md").read_text(encoding="utf-8"),
-                  re.M)
-    return m.group(1) if m else "1.0"
+    versions = _parse_release_notes()
+    return versions[0]["version"] if versions else "1.0"
+
+
+def _latest_doc_author() -> str:
+    """Return the author of the latest version from docs/release-notes.md."""
+    versions = _parse_release_notes()
+    if versions and versions[0].get("author"):
+        return versions[0]["author"]
+    return "Система"
+
+
+def _rebuild_revision_table(doc, versions: list[dict]):
+    """Clear data rows in the revision table and add one row per version."""
+    rev = _find_revision_table(doc)
+    if rev is None:
+        return
+    while len(rev.rows) > 1:
+        tr = rev.rows[1]._tr
+        tr.getparent().remove(tr)
+    for v in versions:
+        row = rev.add_row()
+        for ci, val in enumerate([v["version"], v["date"], v["author"], v["description"]]):
+            cell = row.cells[ci]
+            cell.text = ""
+            _add_run(cell.paragraphs[0], val)
+
+
+def _set_author_in_headers(doc, author: str):
+    """Add an author row to every header table (after the version row).
+
+    The version text lives in a block-level SDT inside a table cell (or in a
+    plain paragraph), so cells are matched via raw ``w:t`` text.
+    """
+    # Several content sections can share the same header part (python-docx
+    # returns the same part for linked/default headers of adjacent sections),
+    # so process each header XML element only once.
+    seen = set()
+    for section in doc.sections:
+        for part in (section.header, section.first_page_header, section.even_page_header):
+            if part is None or not part.tables:
+                continue
+            if part._element in seen:
+                continue
+            seen.add(part._element)
+            for table in part.tables:
+                version_row = None
+                for row in table.rows:
+                    txt = "".join(t.text or "" for t in row._tr.iter(qn("w:t")))
+                    if "Версия документа" in txt:
+                        version_row = row
+                        break
+                if version_row is None:
+                    continue
+                new_row = table.add_row()
+                version_row._tr.addnext(new_row._tr)
+                new_row.cells[0].text = ""
+                _add_run(new_row.cells[0].paragraphs[0], f"Автор: {author}")
+                if len(new_row.cells) > 1:
+                    new_row.cells[0].merge(new_row.cells[-1])
+                break
 
 
 def _set_doc_version(doc, version: str):
@@ -1439,10 +1561,19 @@ def _fresh_doc() -> tuple[Document, list]:
 
     kept = [k for k in (rev_heading, rev_tbl, toc_sdt) if k is not None]
 
+    # Everything before the first kept element is the title block (logo
+    # paragraphs, 'Название'/'Тема'/'Аннотация' SDTs, spacing). It must be
+    # preserved in place, otherwise the title page ends up with images but no
+    # text. kept (revision heading/table/TOC) is moved to the content section
+    # separately by _move_to_body_end().
+    boundary = min((children.index(k) for k in kept if k in children),
+                   default=len(children))
+    keep = set(kept) | {el for el in children[:boundary]}
+
     for el in children:
         if el.tag == qn("w:sectPr"):
             continue
-        if el is children[0] or el in kept:
+        if el in keep:
             continue
         body.remove(el)
 
@@ -1551,6 +1682,9 @@ def _prepare_docx(md_path: Path, product_name: str | None = None, toc_pages: dic
 
     _add_footer(doc, product_name, content_hdr_rid, content_ftr_rid)
     _set_doc_version(doc, _latest_doc_version())
+    versions = _parse_release_notes()
+    _rebuild_revision_table(doc, versions)
+    _set_author_in_headers(doc, _latest_doc_author())
     _strip_heading_autonum(doc)
     _enable_field_updates(doc)
     toc_entries = _rebuild_toc_entries(doc, toc_pages)
