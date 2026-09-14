@@ -44,7 +44,7 @@ extra_javascript:
 
 markdown_extensions:
   - pymdownx.snippets:
-      base_path: ["docs/snippets"]
+      base_path: !relative $config_dir/docs/snippets
       check_paths: true
   - pymdownx.highlight
   - pymdownx.superfences
