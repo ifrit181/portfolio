@@ -959,32 +959,37 @@ def _fit_title_page(doc):
     (the logo is taller than its row), which pushes the version row onto a
     second page. Force exact row heights sized to fit the printable area.
 
-    Current templates build the title from body SDTs (no table); only a
-    table found inside the title section (before the section break) is
-    reflowed.
+    Current templates build the title from body SDTs (no table), so the
+    reflow only applies to a real title table: a ``w:tbl`` that sits before
+    the revision heading and carries the 'Название' SDT.
     """
     body = doc.element.body
-    title_tbl = None
     for el in body.iterchildren():
-        if el.tag == qn("w:tbl"):
-            title_tbl = el
-            break
-        if el.tag == qn("w:p") and el.find(qn("w:pPr")) is not None \
-                and el.find(qn("w:pPr")).find(qn("w:sectPr")) is not None:
-            break
-    if title_tbl is None:
+        if el.tag == qn("w:p"):
+            txt = "".join(t.text or "" for t in el.iter(qn("w:t"))).strip()
+            if txt.startswith("Изменения в документе"):
+                break
+        if el.tag != qn("w:tbl"):
+            continue
+        has_name_sdt = any(
+            (sdt.find(qn("w:sdtPr")) is not None
+             and sdt.find(qn("w:sdtPr")).find(qn("w:alias")) is not None
+             and sdt.find(qn("w:sdtPr")).find(qn("w:alias")).get(qn("w:val")) == "Название")
+            for sdt in el.iter(qn("w:sdt")))
+        if not has_name_sdt:
+            continue
+        for i, tr in enumerate(el.findall(qn("w:tr"))[: len(_TITLE_ROW_PLAN)]):
+            trPr = tr.find(qn("w:trPr"))
+            if trPr is None:
+                trPr = parse_xml(f'<w:trPr {nsdecls("w")}/>')
+                tr.insert(0, trPr)
+            trHeight = trPr.find(qn("w:trHeight"))
+            if trHeight is None:
+                trHeight = parse_xml(f'<w:trHeight {nsdecls("w")}/>')
+                trPr.append(trHeight)
+            trHeight.set(qn("w:val"), str(_TITLE_ROW_PLAN[i]))
+            trHeight.set(qn("w:hRule"), "exact")
         return
-    for i, tr in enumerate(title_tbl.findall(qn("w:tr"))[: len(_TITLE_ROW_PLAN)]):
-        trPr = tr.find(qn("w:trPr"))
-        if trPr is None:
-            trPr = parse_xml(f'<w:trPr {nsdecls("w")}/>')
-            tr.insert(0, trPr)
-        trHeight = trPr.find(qn("w:trHeight"))
-        if trHeight is None:
-            trHeight = parse_xml(f'<w:trHeight {nsdecls("w")}/>')
-            trPr.append(trHeight)
-        trHeight.set(qn("w:val"), str(_TITLE_ROW_PLAN[i]))
-        trHeight.set(qn("w:hRule"), "exact")
 
 
 def _title_page(doc, product_name):
@@ -1564,11 +1569,18 @@ def _fresh_doc() -> tuple[Document, list]:
     # Everything before the first kept element is the title block (logo
     # paragraphs, 'Название'/'Тема'/'Аннотация' SDTs, spacing). It must be
     # preserved in place, otherwise the title page ends up with images but no
-    # text. kept (revision heading/table/TOC) is moved to the content section
-    # separately by _move_to_body_end().
+    # text. Section-break paragraphs (pPr/sectPr) inside that block are NOT
+    # kept — the pipeline adds its own section break for the content section,
+    # and keeping the template's one would double the break and produce a
+    # blank page. The kept elements (revision heading/table/TOC) are moved to
+    # the content section separately by _move_to_body_end().
     boundary = min((children.index(k) for k in kept if k in children),
                    default=len(children))
-    keep = set(kept) | {el for el in children[:boundary]}
+    keep = {el for el in children[:boundary]
+            if not (el.tag == qn("w:p")
+                    and el.find(qn("w:pPr")) is not None
+                    and el.find(qn("w:pPr")).find(qn("w:sectPr")) is not None)}
+    keep.update(kept)
 
     for el in children:
         if el.tag == qn("w:sectPr"):
