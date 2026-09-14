@@ -10,8 +10,8 @@ theme:
   name: material
   language: ru
   custom_dir: overrides
-  logo: assets/logo/logo.png
-  favicon: assets/logo/logo.png
+  logo: assets/logo/cannabis-leaf_128x128.svg
+  favicon: assets/logo/cannabis-leaf_128x128.svg
   palette:
     - scheme: default
       primary: amber
@@ -81,6 +81,9 @@ plugins:
 
 hooks:
   - hooks/generate_pdf.py
+  - hooks/portfolio_notice.py
+
+copyright: "Портфолио · вымышленный контент · © 2026 Кудряшова Т.В."
 
 nav:
   - Главная: index.md

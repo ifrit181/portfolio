@@ -29,33 +29,157 @@
   --md-footer-fg-color: #E8E2D6;
 }
 
-/* Тёмная схема */
+/* --- Тёмная схема: усиленный контраст --- */
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color: #C99A6D;
-  --md-primary-fg-color--light: #D9B587;
+  --md-primary-fg-color: #D9B587;
+  --md-primary-fg-color--light: #E8CBA4;
   --md-primary-fg-color--dark: #A87A52;
 
-  --md-accent-fg-color: #D9B587;
-  --md-accent-fg-color--transparent: rgba(217, 181, 135, 0.14);
+  --md-accent-fg-color: #E8CBA4;
+  --md-accent-fg-color--transparent: rgba(232, 203, 164, 0.16);
 
-  --md-default-fg-color: #E8E2D6;
-  --md-default-fg-color--light: #A89E8E;
-  --md-default-fg-color--lighter: #6F685C;
+  /* Основной текст — светлее */
+  --md-default-fg-color: #F1EBE0;
+  --md-default-fg-color--light: #C9C0B0;
+  --md-default-fg-color--lighter: #8C8578;
 
-  --md-default-bg-color: #1C1916;
-  --md-default-bg-color--light: #25221E;
-  --md-default-bg-color--lighter: #2A2620;
+  /* Фон — чуть светлее, чтобы текст не «проваливался» */
+  --md-default-bg-color: #221E1A;
+  --md-default-bg-color--light: #2A2520;
+  --md-default-bg-color--lighter: #322C25;
 
-  --md-code-bg-color: #2A2620;
-  --md-code-fg-color: #E0B87A;
+  /* Код — контрастнее */
+  --md-code-bg-color: #2E2822;
+  --md-code-fg-color: #F0C88A;
 
-  --md-typeset-a-color: #C99A6D;
-  --md-typeset-mark-color: rgba(217, 181, 135, 0.4);
+  --md-typeset-a-color: #E8CBA4;
+  --md-typeset-mark-color: rgba(232, 203, 164, 0.35);
 
-  --md-footer-bg-color: #141210;
-  --md-footer-fg-color: #A89E8E;
+  --md-footer-bg-color: #14110E;
+  --md-footer-fg-color: #C9C0B0;
 }
 
+/* --- Ссылки: ярче и с подчёркиванием при наведении --- */
+[data-md-color-scheme="slate"] .md-typeset a {
+  color: #E8CBA4;
+  text-decoration-color: rgba(232, 203, 164, 0.4);
+  text-underline-offset: 0.15em;
+}
+
+[data-md-color-scheme="slate"] .md-typeset a:hover {
+  color: #F5DCB4;
+  text-decoration-color: #F5DCB4;
+}
+
+/* --- Заголовки: чуть светлее --- */
+[data-md-color-scheme="slate"] .md-typeset h1,
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3,
+[data-md-color-scheme="slate"] .md-typeset h4 {
+  color: #EFCFA0;
+}
+
+/* --- Боковая навигация --- */
+[data-md-color-scheme="slate"] .md-nav__link {
+  color: #D6CEC0;
+}
+
+[data-md-color-scheme="slate"] .md-nav__link:hover {
+  color: #F5DCB4;
+}
+
+[data-md-color-scheme="slate"] .md-nav__link--active,
+[data-md-color-scheme="slate"] .md-nav__item--active > .md-nav__link {
+  color: #EFCFA0;
+  font-weight: 600;
+}
+
+/* --- Верхние табы --- */
+[data-md-color-scheme="slate"] .md-tabs {
+  background: rgba(42, 37, 32, 0.85);
+}
+
+[data-md-color-scheme="slate"] .md-tabs__link {
+  color: #D6CEC0;
+  opacity: 1;
+}
+
+[data-md-color-scheme="slate"] .md-tabs__link--active,
+[data-md-color-scheme="slate"] .md-tabs__link:hover {
+  color: #F5DCB4;
+}
+
+/* --- Шапка --- */
+[data-md-color-scheme="slate"] .md-header {
+  background: linear-gradient(90deg, #2E2822 0%, #3A322A 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* --- Таблицы --- */
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
+  border-color: #443C33;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background-color: #3A322A;
+  color: #F1EBE0;
+  border-bottom-color: #4A4038;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) td {
+  border-color: #3A322A;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tr:nth-child(even) {
+  background-color: rgba(58, 50, 42, 0.35);
+}
+
+/* --- Блоки кода --- */
+[data-md-color-scheme="slate"] .md-typeset pre > code,
+[data-md-color-scheme="slate"] .md-typeset .highlight {
+  border: 1px solid rgba(232, 203, 164, 0.18);
+  background-color: #2E2822;
+}
+
+[data-md-color-scheme="slate"] .md-typeset code {
+  background-color: #2E2822;
+  color: #F0C88A;
+}
+
+/* --- Admonition: переопределяем цвета --- */
+[data-md-color-scheme="slate"] .md-typeset .admonition,
+[data-md-color-scheme="slate"] .md-typeset details {
+  background-color: rgba(58, 50, 42, 0.5);
+  border-color: rgba(232, 203, 164, 0.3);
+  color: #F1EBE0;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .admonition-title,
+[data-md-color-scheme="slate"] .md-typeset summary {
+  background-color: rgba(232, 203, 164, 0.12);
+  color: #EFCFA0;
+}
+
+/* --- Поиск --- */
+[data-md-color-scheme="slate"] .md-search__input {
+  background-color: rgba(58, 50, 42, 0.6);
+  color: #F1EBE0;
+}
+
+[data-md-color-scheme="slate"] .md-search__input::placeholder {
+  color: #A89E8E;
+}
+
+/* --- Сноски, выделение --- */
+[data-md-color-scheme="slate"] ::selection {
+  background-color: rgba(232, 203, 164, 0.35);
+  color: #FFFFFF;
+}
+
+/* --- Скроллбар --- */
+[data-md-color-scheme="slate"] * {
+  scrollbar-color: #A87A52 #221E1A;
+}
 /* Шапка: очень мягкий градиент между двумя близкими оттенками */
 .md-header {
   background: linear-gradient(90deg, #7A4132 0%, #9C5B45 100%);
