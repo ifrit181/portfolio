@@ -1,10 +1,10 @@
 site_name: TaskFlow — документация
 site_description: Система управления задачами и проектами
 site_author: "[Кудряшова Т.В.]"
-site_url: "https://example.github.io/taskflow-docs/"
+site_url: "https://portfolio.github.io/taskflow-docs/"
 
-repo_name: "example/taskflow-docs"
-repo_url: "https://github.com/example/taskflow-docs"
+repo_name: "portfolio/taskflow-docs"
+repo_url: "https://github.com/portfolio/taskflow-docs"
 
 theme:
   name: material
