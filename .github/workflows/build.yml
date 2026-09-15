@@ -53,7 +53,7 @@ jobs:
 
       - name: Validate OpenAPI                     # ← новый шаг
         run: |
-          openapi-spec-validator taskflow-docs/docs/api/openapi.yaml
+          openapi-spec-validator taskflow-docs/docs/api/openapi.json
 
       - name: Build site with PDFs
         env:
