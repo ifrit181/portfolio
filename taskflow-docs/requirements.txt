@@ -7,3 +7,4 @@ mkdocs-minify-plugin
 htmlmin
 pypdf
 python-docx
+mkdocs-swagger-ui-tag

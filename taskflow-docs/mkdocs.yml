@@ -1,10 +1,11 @@
 site_name: TaskFlow — документация
 site_description: Система управления задачами и проектами
 site_author: "[Кудряшова Т.В.]"
-site_url: "https://ifrit181.github.io/taskflow-docs/"
 
-repo_name: "portfolio/taskflow-docs"
-repo_url: "https://github.com/portfolio/taskflow-docs"
+site_url: "https://ifrit181.github.io/portfolio/"
+
+repo_name: "ifrit181/portfolio"
+repo_url: "https://github.com/ifrit181/portfolio"
 
 theme:
   name: material
@@ -29,7 +30,7 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.top
-    - navigation.indexes
+    #- navigation.indexes
     - navigation.footer
     - search.suggest
     - search.highlight
@@ -78,6 +79,10 @@ plugins:
       minify_html: true
       minify_js: true
       minify_css: true
+  - swagger-ui-tag:
+      docExpansion: none
+      filter: ""
+      tryItOutEnabled: true
 
 hooks:
   - hooks/generate_pdf.py
@@ -98,7 +103,9 @@ nav:
   - Администрирование:
       - Пользователи: admin-guide/users.md
       - Настройки: admin-guide/settings.md
-  - API: api/reference.md
+  - API:
+      - Обзор: api/reference.md
+      - Спецификация: api/openapi.yaml
   - Теги: tags.md
   - Документация в PDF:
       - Скачать в PDF: pdf.md
