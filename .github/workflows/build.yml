@@ -50,6 +50,10 @@ jobs:
           markdownlint taskflow-docs/docs/ \
             --config taskflow-docs/.markdownlint.json || true
 
+      - name: Validate OpenAPI                     # ← новый шаг
+        run: |
+          openapi-spec-validator taskflow-docs/docs/api/openapi.yaml
+
       - name: Build site with PDFs
         env:
           LO_PROFILE: /opt/lo-profile
