@@ -105,7 +105,7 @@ nav:
       - Настройки: admin-guide/settings.md
   - API:
       - Обзор: api/reference.md
-      - Спецификация: api/openapi.yaml
+
   - Теги: tags.md
   - Документация в PDF:
       - Скачать в PDF: pdf.md
