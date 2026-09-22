@@ -1,59 +1,82 @@
-# Zensical — эксперимент по запуску «Цифра.Карьер»
+# Zensical — препроцессор `{% include-markdown %}` для сборки документации
 
-Здесь собраны результаты проверки генератора статических сайтов
-[Zensical](https://zensical.dev/) как альтернативы MkDocs
-для документации «Цифра.Карьер».
+Учебно-демонстрационный проект: сборка документации TaskFlow
+(обычный MkDocs Material-сайт со сниппетами) альтернативным
+генератором статических сайтов — [Zensical](https://zensical.dev/).
 
-Папка исключена из git (см. `.gitignore`).
+Изюминка: Zensical не умеет плагин `mkdocs-include-markdown-plugin`,
+поэтому сниппеты здесь раскрывает написанный вручную препроцессор
+`process_includes.py`, а конфиг для Zensical генерируется из
+стандартного `mkdocs.yml` автоматически.
 
-## Установка
+## Что внутри
 
-Zensical установлен НЕ в git-репозитории, а отдельно:
+| Файл | Назначение |
+|---|---|
+| `process_includes.py` | Препроцессор: раскрывает `{% include-markdown %}` и синхронизирует конфиг Zensical |
+| `mkdocs.zensical.yml` | Адаптированная копия `mkdocs.yml` (генерируется скриптом) |
+| `tests/test_process_includes.py` | Юнит-тесты (только стандартная библиотека) |
+| `build/docs_expanded/` | Результат препроцессинга (исключён из git) |
+| `site/` | Собранный Zensical-сайт (исключён из git) |
 
-- Расположение: `~/zensical`
-- Виртуальное окружение: `~/zensical/.venv` (Python 3.12)
-- Версия: 0.0.55 (`zensical --version`)
+## Зачем это нужно
 
-Активация:
+В `docs/` сниппеты подключаются блоками:
 
-```bash
-source ~/zensical/.venv/bin/activate
+```markdown
+{% include-markdown "snippets/auth-note.md" %}
 ```
 
-Пробный проект (для знакомства) создан в `~/zensical`:
-`zensical new .` → `zensical.toml`, `docs/`, `.github/`.
+MkDocs раскрывает их плагином `mkdocs-include-markdown-plugin`.
+Zensical этот плагин не поддерживает — без препроцессора блоки
+попадали бы в HTML как сырой текст.
 
-## Команды
+`process_includes.py` — «мост»: он читает исходники из `docs_dir`,
+заменяет все `{% include-markdown %}` реальным содержимым сниппетов
+и пишет результат в `build/docs_expanded/`. Исходники не изменяются —
+скрипт только читает и копирует.
+
+Поддерживаются возможности плагина:
+- `start=` / `end=` — включить фрагмент сниппета между
+  HTML-маркерами (повторная логика `filter_inclusions()` плагина);
+- переписывание относительных ссылок под место вставки
+  (аналог `rewrite_relative_urls: true` — картинки `../assets/...`
+  и ссылки `../admin-guide/users.md` остаются валидными);
+- рекурсивное раскрытие вложенных сниппетов с защитой от циклов;
+- копирование не-Markdown файлов (картинки, PDF и т.п.) без изменений.
+
+## Как запустить
+
+Требуется Python 3.12+ с PyYAML и установленный Zensical
+(`pip install zensical`), например:
 
 ```bash
-# Сборка в папку site/
-zensical build
-
-# Локальный сервер
-zensical serve
+source ~/zensical/.venv/bin/activate   # установленное окружение
 ```
 
-Полезные флаги:
-- build: `-c/--clean`, `-s/--strict`
-- serve: `-f/--config-file`, `-a/--dev-addr`, `-o/--open`
-
-## Как запустить реальный проект документации
-
-Zensical умеет читать конфиг MkDocs (`mkdocs.yml`), но с
-ограничениями (см. ниже). Рабочий вариант — использовать
-препроцессор `process_includes.py` + адаптированный конфиг:
-
-**1. Раскрыть сниппеты include-markdown (обязательный шаг):**
+**1. Раскрыть сниппеты и синхронизировать конфиг (из корня репозитория):**
 
 ```bash
-cd /Users/tatanakudrasova/PycharmProjects/vist/user_manual
-source ~/zensical/.venv/bin/activate
 python3 zensical/process_includes.py
 ```
 
-Скрипт читает `data/docs`, заменяет все `{% include-markdown %}`
-реальным содержимым сниппетов и складывает результат в
-`zensical/build/docs_expanded/`. Исходники не изменяются.
+Скрипт читает `mkdocs.yml`, определяет `docs_dir` и параметры плагина
+`include-markdown`, раскрывает сниппеты в `zensical/build/docs_expanded/`.
+Если `zensical/mkdocs.zensical.yml` отстал от `mkdocs.yml` — скрипт
+пересоздаёт его автоматически (строка `> обновлён конфиг Zensical: ...`).
+
+С опцией `--pdfs` (или `-p`) дополнительно генерируются PDF всех страниц
+`nav` (`avto_doc` + headless LibreOffice) в
+`build/docs_expanded/assets/pdf/` — их Zensical перенесёт в собранный
+сайт, и кнопка «Скачать в PDF» заработает:
+
+```bash
+python3 zensical/process_includes.py --pdfs
+```
+
+PDF-генерации нужен LibreOffice в PATH (`soffice`) и Python-пакеты
+`pypdf`, `python-docx` (в реальном пайплайне на GitHub Pages ту же
+работу делает хук `hooks/generate_pdf.py` при сборке MkDocs).
 
 **2. Собрать сайт:**
 
@@ -61,121 +84,64 @@ python3 zensical/process_includes.py
 zensical build -f zensical/mkdocs.zensical.yml
 ```
 
-Команда собирает сайт за ~37-46 секунд (3 предупреждения о
-битых якорях/страницах в исходниках, не связаны с Zensical).
+Проверка сборки в строгом режиме:
 
-**3. Посмотреть сайт — локальный сервер:**
+```bash
+zensical build -f zensical/mkdocs.zensical.yml -s
+```
+
+**3. Посмотреть локально:**
 
 ```bash
 zensical serve -f zensical/mkdocs.zensical.yml
+# откройте http://localhost:8000
 ```
 
-Открыть в браузере: **http://localhost:8000**
-
-Сервер работает в фоне и пересобирает сайт при изменениях
-файлов в `data/docs`. Остановить — `Ctrl+C`.
-
-Либо открыть собранную страницу напрямую без сервера:
-
-```bash
-open site/index.html
-```
-
-⚠️ При открытии через `file://` поиск и часть скриптов могут не
-работать (сайт собран под HTTP), поэтому для полноценного
-просмотра лучше использовать `zensical serve`.
-
-⚠️ Важно: адрес `http://localhost:8000` в инструкциях Zensical —
-просто подсказка для браузера, в команду его писать НЕ нужно
-(zsh воспринимает `(http://...)` как атрибуты файла).
-
-## Скрипт process_includes.py
-
-**Что это:** препроцессор-мост для сниппетов `{% include-markdown %}`.
-
-**Зачем нужен:** Zensical не поддерживает плагин
-`mkdocs-include-markdown-plugin` — его блоки в тексте (998 вызовов
-с `start/end` и 499 полных включений в 312 из 1162 файлов) не
-подставляются и попадают в HTML как сырой текст.
-
-**Что делает:**
-- находит все блоки `{% include-markdown "файл" start=... end=... %}`
-  и подставляет содержимое сниппета (целиком или фрагмент между
-  HTML-маркерами), повторяя логику `filter_inclusions()` плагина;
-- переписывает относительные ссылки в сниппетах под место вставки
-  (аналог `rewrite_relative_urls: true` — картинки `../assets/...`
-  и ссылки на страницы остаются валидными);
-- рекурсивно раскрывает вложенные сниппеты с защитой от циклов;
-- копирует не-Markdown файлы (картинки, CSS) без изменений;
-- пишет результат в `zensical/build/docs_expanded/`, не трогая
-  исходную `data/docs`.
-
-**Настройки** — переменные в начале файла (`REPO_ROOT`, `SRC_CONFIG`,
-`OUT_DIR`).
-
-## Тесты
-
-Юнит-тесты (стандартный `unittest`, без дополнительных зависимостей)
-лежат в `zensical/tests/test_process_includes.py`. Покрывают парсинг
-блоков, фильтрацию по `start`/`end`, переписывание ссылок, рекурсивное
-раскрытие с защитой от циклов, копирование не-Markdown файлов и вызов
-`process()`/`main()` на временных фикстурах.
-
-Запуск (из корня репозитория):
-
-```bash
-source ~/zensical/.venv/bin/activate
-python3 -m unittest discover -s zensical/tests
-# подробно:
-python3 -m unittest discover -s zensical/tests -v
-```
+Собранный сайт появляется в `zensical/site/`.
 
 ## Файл mkdocs.zensical.yml
 
-Адаптированная копия `data/mkdocs.yml`. Отличия от оригинала:
-1. Убран `slide_effect: slide` из плагина glightbox (несовместим).
-2. `docs_dir` указывает на `build/docs_expanded` — папку после
-   препроцессинга (Zensical резолвит пути от корня проекта).
-3. `custom_dir` переписан на `../data/overrides` (конфиг лежит в
-   `zensical/`, а кастомизация темы — в `data/overrides`).
-4. Плагин `include-markdown` убран (сниппеты уже раскрыты).
+Адаптированная копия `mkdocs.yml` для Zensical. Отличия от оригинала:
 
-Файл не поддерживается руками: при запуске `process_includes.py`
-`data/mkdocs.yml` адаптируется под Zensical и сравнивается с текущим
-`mkdocs.zensical.yml`. Если конфиг отстал (например, изменился `nav`
-или настройки), скрипт пересоздаёт его автоматически (строка
-`> обновлён конфиг Zensical: ...`). Если совпадает — файл не трогается.
+1. Плагин `include-markdown` убран: сниппеты уже раскрыты
+   препроцессором.
+2. `docs_dir` указывает на `build/docs_expanded` — результат
+   препроцессинга (Zensical резолвит пути относительно папки конфига).
+3. `custom_dir` темы переписан в `../overrides` (конфиг лежит в
+   `zensical/`, кастомизация темы — в `overrides/` у корня репозитория).
+4. В `toc` добавлен `slugify: !!python/name:markdown.extensions.toc.slugify_unicode`
+   — кириллические якоря формируются «читаемо» (без `_6`).
+5. Тег `!ENV` из `git-revision-date-localized` (например,
+   `enabled: !ENV [CI, false]`) разрешается в обычное значение
+   переменной окружения.
 
-## Несовместимости с текущим mkdocs.yml
+Файл не правится руками: при каждом запуске `process_includes.py`
+он сверяется с актуальным `mkdocs.yml` и пересоздаётся только при
+расхождениях. Теги `!!python/name:` сериализуются корректно
+(используются для `slugify` и emoji-индексов pymdownx).
 
-| Проблема | Статус / решение |
-|---|---|
-| Плагин `glightbox` с параметром `slide_effect` | Несовместим. Zensical знает только: `touchNavigation`, `loop`, `effect`, `width`, `height`, `zoomable`, `draggable`, `auto_themed`, `auto_caption`, `caption_position`, `background`, `shadow`, `manual`. Параметр `slide_effect: slide` вызывает `TypeError: GlightboxConfig.__init__() got an unexpected keyword argument 'slide_effect'` |
-| `docs_dir` не задан в mkdocs.yml | Zensical резолвит пути относительно КОРНЯ проекта (папки конфига), а не самого конфига. Для `data/mkdocs.yml` нужно явно указать `docs_dir: data/docs` |
-| `custom_dir: overrides` (кастомизация темы Material) | Нужно указывать относительно корня: `data/overrides` |
-| Плагин `include-markdown` | **НЕ поддерживается напрямую**. Решение — препроцессор `process_includes.py`, раскрывающий сниппеты в `zensical/build/docs_expanded/` до сборки |
+## Тесты
 
-Критический блокер `include-markdown` снят: все 499 блоков (998
-вызовов) раскрываются скриптом, и сайт собирается целиком.
+Юнит-тесты на `unittest` (без дополнительных зависимостей):
 
-## Не проверено / возможные пути дальше
+```bash
+python3 -m unittest discover -s zensical/tests
+```
 
-- Альтернатива препроцессору — перевод сниппетов на `pymdownx.snippets`
-  (поддерживается Zensical нативно: `--8<-- "путь"` и секции
-  `--8<-- [start:имя]` / `--8<-- [end:имя]`). Тогда шаг препроцессинга
-  не нужен, но придётся переписать ~1500 вызовов и маркеры в сниппетах.
-- Тема Material и кастомная схема `zyfra_light` в настройках
-  темы — внешний вид собранного сайта детально не сверялся.
-- Поведение плагина `autolinks` (Zensical имеет собственный
-  механизм автоссылок через расширение links).
+Покрытие: парсинг блоков, фильтрация `start`/`end`, переписывание
+ссылок, вложенные сниппеты и защита от циклов, копирование
+не-Markdown файлов, регенерация конфига (включая idempotent-
+поведение) и вызовы `process()`/`main()` на временных фикстурах.
 
-## История проверки
+## Как это устроено внутри
 
-- 0.0.55: тестовый проект в `~/zensical` собирается без ошибок.
-- 0.0.55: реальный проект по `data/mkdocs.yml` — упал на glightbox.
-- 0.0.55: экспериментальная сборка без препроцессинга
-  (`docs_dir` + `custom_dir` + без `slide_effect`): сниппеты
-  include-markdown остались нераскрытыми (сырой текст в HTML).
-- 0.0.55: `process_includes.py` раскрывает все 499 блоков (0
-  нераскрытых), сборка `zensical/mkdocs.zensical.yml` — успешно
-  (~37 с, 3 предупреждения в исходниках, не связаны с Zensical).
+- `_BLOCK_RE` разбирает блок `{% ... %}`;
+- `_resolve_include_path()` повторяет логику плагина: пути `./`
+  и `../` резолвятся от файла-включателя, остальные — от `docs_dir`;
+- `_filter_inclusion()` повторяет `filter_inclusions()` плагина;
+- `_rewrite_relative_urls()` переписывает md-ссылки, `<img>` и `<a>`;
+- `_adapt_config()` + `_ZensicalDumper` превращают `mkdocs.yml`
+  в `mkdocs.zensical.yml`, сохраняя теги `!!python/name:` и
+  понимая тег `!ENV`;
+- `process()` копирует дерево `docs_dir` с раскрытием и переносит
+  остальные файлы без изменений.

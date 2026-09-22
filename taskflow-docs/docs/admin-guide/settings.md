@@ -193,4 +193,4 @@
 !!! warning "Перед очисткой"
     Убедитесь, что создана резервная копия. Откатить очистку нельзя.
 
---8<-- "warning-backup.md"
+{% include-markdown "snippets/warning-backup.md" %}

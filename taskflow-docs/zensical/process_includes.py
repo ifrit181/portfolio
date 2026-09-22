@@ -18,7 +18,7 @@ include-markdown — как обычные Markdown-файлы.
 Исходники не изменяются: скрипт читает и копирует, а правки пишет
 только в выходную папку.
 
-Поведение повторяет настройки плагина из `data/mkdocs.yml`:
+Поведение повторяет настройки плагина из mkdocs.yml (см. SRC_CONFIG):
 - `start` / `end` — включение только фрагмента сниппета между
   HTML-маркерами (строка с маркером не копируется);
 - `rewrite_relative_urls` — относительные ссылки в сниппете
@@ -29,19 +29,22 @@ include-markdown — как обычные Markdown-файлы.
 Как запускать
 -------------
 
-    # активировать zensical или использовать любой Python 3.12
-    source ~/zensical/.venv/bin/activate
-    python3 process_includes.py
+    python3 zensical/process_includes.py
 
-Результат появится в папке `build/docs_expanded/`
+С опцией `--pdfs` (или `-p`) дополнительно генерируются PDF всех
+страниц из nav (через DOCX и LibreOffice) в `build/docs_expanded/assets/pdf/`:
+
+    python3 zensical/process_includes.py --pdfs
+
+Результат появится в папке `zensical/build/docs_expanded/`
 (рядом с этим скриптом). Затем:
 
-    zensical build -f zensical/zensical_build.yml
+    zensical build -f zensical/mkdocs.zensical.yml
 
 Настройки (переменные в разделе CONFIG ниже):
 - REPO_ROOT  — корень репозитория документации;
-- SRC_CONFIG — путь к конфигу MkDocs относительно REPO_ROOT,
-               откуда берётся docs_dir и настройки include-markdown;
+- SRC_CONFIG — путь к конфигу MkDocs, откуда берутся docs_dir
+               и настройки include-markdown;
 - OUT_DIR    — куда складывать раскрытые страницы.
 
 Зависимости: PyYAML (есть в окружении Zensical).
@@ -66,7 +69,7 @@ from yaml.nodes import ScalarNode
 REPO_ROOT = Path(__file__).resolve().parent.parent
 """Корень репозитория документации (верхняя папка с git-репозиторием)."""
 
-SRC_CONFIG = REPO_ROOT / "data" / "mkdocs.yml"
+SRC_CONFIG = REPO_ROOT / "mkdocs.yml"
 """Исходный конфиг MkDocs — источник docs_dir и плагина include-markdown."""
 
 OUT_DIR = Path(__file__).resolve().parent / "build" / "docs_expanded"
@@ -82,7 +85,62 @@ ZENSICAL_CONFIG = Path(__file__).resolve().parent / "mkdocs.zensical.yml"
 NAV_COMMENT = "<!-- zensical: include-markdown раскрыт автоматически -->"
 
 # -----------------------------------------------------------------------------
-# Генерация zensical/mkdocs.zensical.yml из data/mkdocs.yml
+# YAML-загрузчик
+# -----------------------------------------------------------------------------
+
+class _YamlLoader(yaml.SafeLoader):
+    """SafeLoader с поддержкой mkdocs-тегов.
+
+    В конфигах MkDocs встречаются выражения вида
+    `enabled: !ENV [CI, false]` (значение из переменной окружения CI
+    или запасное значение, если переменная не задана), а также теги
+    `!!python/name:module.attr` (emoji-индексы, slugify для toc).
+    Без обработки yaml.safe_load падает с ConstructorError, поэтому
+    теги разрешаются до обычных значений, а python/name — до пары
+    (module, attr), которую умеет снова сериализовать _ZensicalDumper.
+    """
+
+
+def _construct_env(loader: _YamlLoader, node: yaml.Node):
+    import os
+
+    if isinstance(node, yaml.SequenceNode):
+        parts = loader.construct_sequence(node)
+        name = parts[0] if parts else ""
+        default = parts[1] if len(parts) > 1 else ""
+    else:
+        name = loader.construct_scalar(node)
+        default = ""
+    return os.environ.get(name, default)
+
+
+def _construct_python_name(
+    loader: _YamlLoader, suffix: str, node: yaml.Node
+) -> tuple[str, str] | str:
+    """Представляет `!!python/name:module.attr` как пару (module, attr).
+
+    Значение узла при теге `!!python/name:...` пустое — имя лежит в
+    суффиксе тега (`material.extensions.emoji.twemoji`).
+    """
+    name = suffix
+    if "." in name:
+        module, attr = name.rsplit(".", 1)
+        return (module, attr)
+    return name
+
+
+_YamlLoader.add_constructor("!ENV", _construct_env)
+_YamlLoader.add_multi_constructor(
+    "tag:yaml.org,2002:python/name:", _construct_python_name
+)
+
+
+def _yaml_load(path: Path):
+    """Читает YAML-конфиг, понимая тег `!ENV`."""
+    return yaml.load(path.read_text(encoding="utf-8"), Loader=_YamlLoader)
+
+# -----------------------------------------------------------------------------
+# Генерация zensical/mkdocs.zensical.yml из mkdocs.yml
 # -----------------------------------------------------------------------------
 
 # Соответствие значений `slugify` в оригинальном конфиге -> того же
@@ -105,7 +163,7 @@ _ZensicalDumper.add_representer(tuple, _dump_python_name)
 
 
 def _adapt_config(cfg: dict, src_config: Path, dst_config: Path) -> dict:
-    """Адаптирует data/mkdocs.yml под Zensical (правила из README).
+    """Адаптирует исходный mkdocs.yml под Zensical (правила из README).
 
     - убирает плагин include-markdown (сниппеты уже раскрыты скриптом);
     - убирает `slide_effect` из glightbox (Zensical не совместим);
@@ -142,7 +200,7 @@ def _adapt_config(cfg: dict, src_config: Path, dst_config: Path) -> dict:
 
 def _render_zensical_config(src_config: Path, dst_config: Path) -> str:
     """Возвращает текст zensical-конфига, полученный из src_config."""
-    cfg = yaml.safe_load(src_config.read_text(encoding="utf-8"))
+    cfg = _yaml_load(src_config)
     adapted = _adapt_config(cfg, src_config, dst_config)
     text = yaml.dump(
         adapted,
@@ -388,7 +446,7 @@ def process(docs_dir: Path, out_dir: Path) -> None:
     rewrite_urls = True
     mkdocs_rel = ""
     if SRC_CONFIG.exists():
-        cfg = yaml.safe_load(SRC_CONFIG.read_text(encoding="utf-8"))
+        cfg = _yaml_load(SRC_CONFIG)
         for plugin in cfg.get("plugins", []):
             if isinstance(plugin, dict) and "include-markdown" in plugin:
                 rewrite_urls = plugin["include-markdown"].get(
@@ -438,14 +496,59 @@ def process(docs_dir: Path, out_dir: Path) -> None:
     )
 
 
-def main() -> int:
+# -----------------------------------------------------------------------------
+# PDF-генерация (опция --pdfs)
+# -----------------------------------------------------------------------------
+
+PDF_ASSET_DIR = "assets/pdf"
+"""Подпапка, куда генерация складывает PDF страниц документации."""
+
+
+def postprocess_pdfs(docs_dir: Path, site_dir: Path) -> bool:
+    """Генерирует PDF всех страниц nav из docs_dir в site_dir/assets/pdf/.
+
+    Zensical не выполняет Python-хуки MkDocs, поэтому переиспользуется
+    хук `hooks/generate_pdf.py`: он собирает DOCX (avto_doc) и
+    конвертирует его в PDF через headless LibreOffice. На страницах
+    сайта кнопка «Скачать в PDF» ищет файл по этому пути.
+
+    Возвращает True, если PDF-генерация была запущена.
+    """
+    try:
+        hooks_dir = REPO_ROOT / "hooks"
+        sys.path.insert(0, str(hooks_dir))
+        import logging
+
+        logging.basicConfig(level=logging.INFO, format="%(message)s")
+        import generate_pdf
+    except Exception as exc:
+        print(f"  ! PDF-генерация недоступна: {exc}")
+        return False
+
+    print("\nГенерация PDF страниц (avto_doc + LibreOffice)...")
+    nav = _yaml_load(SRC_CONFIG).get("nav", [])
+    config = {
+        "docs_dir": str(docs_dir),
+        "site_dir": str(site_dir),
+        "nav": nav,
+    }
+    generate_pdf.on_post_build(config)
+    pdfs = list((site_dir / PDF_ASSET_DIR).rglob("*.pdf"))
+    print(f"Готово: PDF — {len(pdfs)}.\n")
+    return True
+
+
+def main(argv: list[str] | None = None) -> int:
     # docs_dir берётся из SRC_CONFIG (как это делает MkDocs:
     # относительно папки конфига). Если в конфиге нет docs_dir,
     # используется docs/ рядом с конфигом.
-    cfg = yaml.safe_load(SRC_CONFIG.read_text(encoding="utf-8"))
+    argv = list(sys.argv if argv is None else argv)
+    with_pdfs = "--pdfs" in argv or "-p" in argv
+
+    cfg = _yaml_load(SRC_CONFIG)
 
     # Перед раскрытием сниппетов приводим конфиг сборки Zensical
-    # в соответствие с data/mkdocs.yml.
+    # в соответствие с mkdocs.yml.
     sync_zensical_config()
 
     docs_dir_name = cfg.get("docs_dir", "docs")
@@ -455,6 +558,11 @@ def main() -> int:
         return 1
 
     process(docs_dir, OUT_DIR)
+
+    if with_pdfs:
+        # PDF складываются в docs_expanded/assets/pdf и попадают в
+        # собранный сайт вместе с остальными статичными файлами.
+        postprocess_pdfs(docs_dir=OUT_DIR, site_dir=OUT_DIR)
     return 0
 
 
