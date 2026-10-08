@@ -60,7 +60,7 @@ def _to_pdf(docx_path: Path, out_dir: Path, profile_dir: Path) -> Path:
     cmd = [
         "soffice",
         "--headless",
-        "-env:UserInstallation=file://" + profile_dir.as_posix(),
+        "-env:UserInstallation=" + profile_dir.as_uri(),
         "--convert-to",
         "pdf",
         "--outdir",
