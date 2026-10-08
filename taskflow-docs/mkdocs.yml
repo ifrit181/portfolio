@@ -44,9 +44,6 @@ extra_javascript:
   - assets/javascripts/download-pdf.js
 
 markdown_extensions:
-  - pymdownx.snippets:
-      base_path: !relative $config_dir/docs/snippets
-      check_paths: true
   - pymdownx.highlight
   - pymdownx.superfences
   - pymdownx.tabbed:
@@ -66,6 +63,8 @@ markdown_extensions:
 
 plugins:
   - search
+  - include-markdown:
+      rewrite_relative_urls: true
   - tags
   - glightbox
   - git-revision-date-localized:

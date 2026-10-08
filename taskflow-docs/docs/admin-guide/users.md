@@ -151,4 +151,4 @@ name,email,role,department
     Раз в квартал проверяйте список администраторов и отключайте
     тех, кому больше не нужен полный доступ.
 
---8<-- "warning-backup.md"
+{% include-markdown "snippets/warning-backup.md" %}

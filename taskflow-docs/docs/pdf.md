@@ -161,4 +161,4 @@ Material for MkDocs**. Оформление отличается, но конт�
     печать через браузер (`Ctrl+P` → **Сохранить как PDF**). Формат
     будет отличаться, но содержимое сохранится.
 
---8<-- "warning-backup.md"
+{% include-markdown "snippets/warning-backup.md" %}

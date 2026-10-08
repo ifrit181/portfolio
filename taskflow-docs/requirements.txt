@@ -8,3 +8,4 @@ htmlmin
 pypdf
 python-docx
 mkdocs-swagger-ui-tag
+mkdocs-include-markdown-plugin

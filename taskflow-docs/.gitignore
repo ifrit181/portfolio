@@ -1,4 +1,6 @@
 site/
+zensical/build/
+zensical/site/
 .venv/
 __pycache__/
 *.pyc
