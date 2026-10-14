@@ -1,10 +1,10 @@
-# SQL и API для системного аналитика
+# <a id="sql-и-api-для-системного-аналитика">SQL и API для системного аналитика</a>
 
 Единый справочник по 26 файлам: обзор темы, глубокое погружение в SQL и API, сквозной workflow и тесты для самопроверки.
 
 ---
 
-## О чём этот справочник
+## <a id="о-чём-этот-справочник">О чём этот справочник</a>
 
 Это набор учебных и рабочих материалов для системного аналитика. Он покрывает
 две ключевые технические компетенции профессии — **SQL** и **API** — а также
@@ -23,7 +23,7 @@
 
 ---
 
-## Для кого
+## <a id="для-кого">Для кого</a>
 
 | Роль | Что найдёт |
 |---|---|
@@ -35,7 +35,7 @@
 
 ---
 
-## Как читать справочник
+## <a id="как-читать-справочник">Как читать справочник</a>
 
 **Если вы новичок** — начните с обзора `00-sql-api-overview.md`. Он даст
 картину за 15 минут. Затем выберите трек «Junior» в разделе «Учебные треки».
@@ -50,7 +50,7 @@
 
 ---
 
-## Структура каталога
+## <a id="структура-каталога">Структура каталога</a>
 
 ```
 sql-api-analyst/
@@ -93,7 +93,7 @@ sql-api-analyst/
 
 ---
 
-## Философия справочника
+## <a id="философия-справочника">Философия справочника</a>
 
 Четыре принципа, по которым собран материал.
 
@@ -111,9 +111,9 @@ sql-api-analyst/
 
 ---
 
-# 🚪 Точка входа
+# <a id="точка-входа">🚪 Точка входа</a>
 
-## [00-sql-api-overview.md](00-sql-api-overview.md) — Обзор всей темы
+## <a id="00-sql-api-overview-обзор-всей-темы">[00-sql-api-overview.md](00-sql-api-overview.md) — Обзор всей темы</a>
 
 Прежде чем нырять в глубокие файлы, откройте этот обзор. В нём — сжатая
 карта всей темы на 10–15 минут чтения.
@@ -139,7 +139,7 @@ sql-api-analyst/
 
 ---
 
-# 🗄️ SQL-блок
+# <a id="sql-блок">🗄️ SQL-блок</a>
 
 SQL — рабочий язык аналитика. Даже если вы проектируете API, вам придётся
 проверять данные, писать выгрузки для отчётов и согласовывать изменения схемы.
@@ -150,7 +150,7 @@ SQL-блок состоит из 9 файлов.
 
 ---
 
-## [01-sql-basics.md](01-sql-basics.md) — Основы выборки
+## <a id="01-sql-basics-основы-выборки">[01-sql-basics.md](01-sql-basics.md) — Основы выборки</a>
 
 SELECT, WHERE, ORDER BY, LIMIT, DISTINCT, NULL, типы данных, работа со строками и датами.
 
@@ -159,7 +159,7 @@ SELECT, WHERE, ORDER BY, LIMIT, DISTINCT, NULL, типы данных, рабо�
 - Работа с датами → [12-sql-dates.md](12-sql-dates.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «SQL: Основы»
 
-## [02-sql-joins.md](02-sql-joins.md) — Объединение таблиц
+## <a id="02-sql-joins-объединение-таблиц">[02-sql-joins.md](02-sql-joins.md) — Объединение таблиц</a>
 
 INNER / LEFT / RIGHT / FULL / CROSS / SELF JOIN, анти-джойн, fan-out, ON vs WHERE.
 
@@ -168,7 +168,7 @@ INNER / LEFT / RIGHT / FULL / CROSS / SELF JOIN, анти-джойн, fan-out, O
 - Производительность JOIN → [11-sql-performance.md](11-sql-performance.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «SQL: JOIN»
 
-## [03-sql-aggregation.md](03-sql-aggregation.md) — Агрегация и группировка
+## <a id="03-sql-aggregation-агрегация-и-группировка">[03-sql-aggregation.md](03-sql-aggregation.md) — Агрегация и группировка</a>
 
 COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING, WHERE vs HAVING, условная агрегация.
 
@@ -177,7 +177,7 @@ COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING, WHERE vs HAVING, условная �
 - Статистика и перцентили → [14-sql-analytics.md](14-sql-analytics.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «SQL: Агрегация»
 
-## [04-sql-advanced.md](04-sql-advanced.md) — Продвинутый SQL
+## <a id="04-sql-advanced-продвинутый-sql">[04-sql-advanced.md](04-sql-advanced.md) — Продвинутый SQL</a>
 
 Подзапросы, EXISTS, CTE, оконные функции (ROW_NUMBER, LAG, LEAD, SUM OVER), UNION, CASE.
 
@@ -186,7 +186,7 @@ COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING, WHERE vs HAVING, условная �
 - Аналитика → [14-sql-analytics.md](14-sql-analytics.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «SQL: Продвинутый уровень»
 
-## [10-sql-ddl-dml.md](10-sql-ddl-dml.md) — DDL, DML, транзакции
+## <a id="10-sql-ddl-dml-ddl-dml-транзакции">[10-sql-ddl-dml.md](10-sql-ddl-dml.md) — DDL, DML, транзакции</a>
 
 CREATE TABLE, ALTER TABLE, INSERT, UPDATE, DELETE, UPSERT, ограничения, транзакции, ACID, VIEW, GRANT.
 
@@ -194,7 +194,7 @@ CREATE TABLE, ALTER TABLE, INSERT, UPDATE, DELETE, UPSERT, ограничени�
 - Ограничения и связи → [02-sql-joins.md](02-sql-joins.md)
 - Производительность → [11-sql-performance.md](11-sql-performance.md)
 
-## [11-sql-performance.md](11-sql-performance.md) — Производительность
+## <a id="11-sql-performance-производительность">[11-sql-performance.md](11-sql-performance.md) — Производительность</a>
 
 Индексы, составные и частичные индексы, EXPLAIN, EXPLAIN ANALYZE, антипаттерны, партиционирование.
 
@@ -202,7 +202,7 @@ CREATE TABLE, ALTER TABLE, INSERT, UPDATE, DELETE, UPSERT, ограничени�
 - DDL и индексы → [10-sql-ddl-dml.md](10-sql-ddl-dml.md)
 - Кэширование на уровне API → [22-api-caching.md](22-api-caching.md)
 
-## [12-sql-dates.md](12-sql-dates.md) — Даты, время, TZ
+## <a id="12-sql-dates-даты-время-tz">[12-sql-dates.md](12-sql-dates.md) — Даты, время, TZ</a>
 
 DATE, TIMESTAMP, TIMESTAMPTZ, EXTRACT, DATE_TRUNC, интервалы, AT TIME ZONE, GENERATE_SERIES.
 
@@ -210,7 +210,7 @@ DATE, TIMESTAMP, TIMESTAMPTZ, EXTRACT, DATE_TRUNC, интервалы, AT TIME Z
 - Основы → [01-sql-basics.md](01-sql-basics.md)
 - Аналитика временных рядов → [14-sql-analytics.md](14-sql-analytics.md)
 
-## [13-sql-dialects.md](13-sql-dialects.md) — Диалекты СУБД
+## <a id="13-sql-dialects-диалекты-субд">[13-sql-dialects.md](13-sql-dialects.md) — Диалекты СУБД</a>
 
 LIMIT vs TOP vs ROWNUM, строковые функции, даты, COALESCE vs ISNULL vs NVL, UPSERT, JSON.
 
@@ -218,7 +218,7 @@ LIMIT vs TOP vs ROWNUM, строковые функции, даты, COALESCE vs
 - Основы → [01-sql-basics.md](01-sql-basics.md)
 - Даты → [12-sql-dates.md](12-sql-dates.md)
 
-## [14-sql-analytics.md](14-sql-analytics.md) — Аналитика данных
+## <a id="14-sql-analytics-аналитика-данных">[14-sql-analytics.md](14-sql-analytics.md) — Аналитика данных</a>
 
 PERCENTILE_CONT, STDDEV, когорты, retention, воронки, RFM, ABC, накопительные метрики.
 
@@ -228,14 +228,14 @@ PERCENTILE_CONT, STDDEV, когорты, retention, воронки, RFM, ABC, н
 
 ---
 
-# 🌐 API-блок
+# <a id="api-блок">🌐 API-блок</a>
 
 API — то, что связывает системы. Аналитик проектирует контракты, описывает
 интеграции, следит за надёжностью. API-блок состоит из 14 файлов.
 
 ---
 
-## [05-api-rest.md](05-api-rest.md) — REST основы
+## <a id="05-api-rest-rest-основы">[05-api-rest.md](05-api-rest.md) — REST основы</a>
 
 Ресурсы, URL, HTTP-методы, статус-коды, request / response, пагинация, версионирование.
 
@@ -244,7 +244,7 @@ API — то, что связывает системы. Аналитик про�
 - OpenAPI → [07-api-openapi.md](07-api-openapi.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «API: REST и HTTP»
 
-## [06-api-auth.md](06-api-auth.md) — Аутентификация и авторизация
+## <a id="06-api-auth-аутентификация-и-авторизация">[06-api-auth.md](06-api-auth.md) — Аутентификация и авторизация</a>
 
 API-ключи, Basic, OAuth 2.0, JWT, роли, матрица прав, сценарии 401 и 403.
 
@@ -252,7 +252,7 @@ API-ключи, Basic, OAuth 2.0, JWT, роли, матрица прав, сце
 - Безопасность → [24-api-security.md](24-api-security.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «API: Безопасность»
 
-## [07-api-openapi.md](07-api-openapi.md) — OpenAPI / Swagger
+## <a id="07-api-openapi-openapi-swagger">[07-api-openapi.md](07-api-openapi.md) — OpenAPI / Swagger</a>
 
 OpenAPI 3.0, paths, components, schemas, parameters, responses, $ref, Swagger UI.
 
@@ -260,7 +260,7 @@ OpenAPI 3.0, paths, components, schemas, parameters, responses, $ref, Swagger UI
 - REST → [05-api-rest.md](05-api-rest.md)
 - Тестирование → [20-api-testing.md](20-api-testing.md)
 
-## [08-api-integrations.md](08-api-integrations.md) — Интеграции
+## <a id="08-api-integrations-интеграции">[08-api-integrations.md](08-api-integrations.md) — Интеграции</a>
 
 Синхронные / асинхронные интеграции, webhooks, очереди, пакетный обмен, маппинг, обработка ошибок.
 
@@ -269,7 +269,7 @@ OpenAPI 3.0, paths, components, schemas, parameters, responses, $ref, Swagger UI
 - Webhooks глубоко → [18-api-webhooks-deep.md](18-api-webhooks-deep.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «API: Интеграции»
 
-## [15-api-http-deep.md](15-api-http-deep.md) — HTTP глубоко
+## <a id="15-api-http-deep-http-глубоко">[15-api-http-deep.md](15-api-http-deep.md) — HTTP глубоко</a>
 
 Структура запроса, методы, статус-коды, заголовки, Content Negotiation, CORS, ETag, Cache-Control.
 
@@ -277,7 +277,7 @@ OpenAPI 3.0, paths, components, schemas, parameters, responses, $ref, Swagger UI
 - REST → [05-api-rest.md](05-api-rest.md)
 - Кэширование → [22-api-caching.md](22-api-caching.md)
 
-## [16-api-design-patterns.md](16-api-design-patterns.md) — Паттерны проектирования
+## <a id="16-api-design-patterns-паттерны-проектирования">[16-api-design-patterns.md](16-api-design-patterns.md) — Паттерны проектирования</a>
 
 Именование, пагинация, фильтры, формат ошибок, bulk, версионирование, HATEOAS.
 
@@ -286,7 +286,7 @@ OpenAPI 3.0, paths, components, schemas, parameters, responses, $ref, Swagger UI
 - OpenAPI → [07-api-openapi.md](07-api-openapi.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «API: Проектирование»
 
-## [17-api-idempotency.md](17-api-idempotency.md) — Идемпотентность и надёжность
+## <a id="17-api-idempotency-идемпотентность-и-надёжность">[17-api-idempotency.md](17-api-idempotency.md) — Идемпотентность и надёжность</a>
 
 Idempotency-Key, retry, backoff, jitter, Circuit Breaker, DLQ, at-most-once / at-least-once / exactly-once.
 
@@ -295,7 +295,7 @@ Idempotency-Key, retry, backoff, jitter, Circuit Breaker, DLQ, at-most-once / at
 - Очереди → [19-api-messaging.md](19-api-messaging.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «API: Идемпотентность»
 
-## [18-api-webhooks-deep.md](18-api-webhooks-deep.md) — Webhooks глубоко
+## <a id="18-api-webhooks-deep-webhooks-глубоко">[18-api-webhooks-deep.md](18-api-webhooks-deep.md) — Webhooks глубоко</a>
 
 События, payload, HMAC, replay protection, retry, идемпотентность, порядок, мониторинг.
 
@@ -304,7 +304,7 @@ Idempotency-Key, retry, backoff, jitter, Circuit Breaker, DLQ, at-most-once / at
 - Идемпотентность → [17-api-idempotency.md](17-api-idempotency.md)
 - Тесты → [25-quiz.md](25-quiz.md), раздел «API: Интеграции»
 
-## [19-api-messaging.md](19-api-messaging.md) — Очереди и брокеры
+## <a id="19-api-messaging-очереди-и-брокеры">[19-api-messaging.md](19-api-messaging.md) — Очереди и брокеры</a>
 
 Kafka, RabbitMQ, SQS / SNS, pub/sub, DLQ, saga, outbox, гарантии доставки.
 
@@ -312,7 +312,7 @@ Kafka, RabbitMQ, SQS / SNS, pub/sub, DLQ, saga, outbox, гарантии дос�
 - Интеграции → [08-api-integrations.md](08-api-integrations.md)
 - Webhooks → [18-api-webhooks-deep.md](18-api-webhooks-deep.md)
 
-## [20-api-testing.md](20-api-testing.md) — Тестирование API
+## <a id="20-api-testing-тестирование-api">[20-api-testing.md](20-api-testing.md) — Тестирование API</a>
 
 Postman, Newman, Pact, mock, нагрузочное тестирование, edge cases, SQL-проверка после вызова API.
 
@@ -320,7 +320,7 @@ Postman, Newman, Pact, mock, нагрузочное тестирование, ed
 - OpenAPI → [07-api-openapi.md](07-api-openapi.md)
 - Идемпотентность → [17-api-idempotency.md](17-api-idempotency.md)
 
-## [21-api-graphql-grpc.md](21-api-graphql-grpc.md) — GraphQL, gRPC, WebSocket
+## <a id="21-api-graphql-grpc-graphql-grpc-websocket">[21-api-graphql-grpc.md](21-api-graphql-grpc.md) — GraphQL, gRPC, WebSocket</a>
 
 GraphQL schema, .proto, gRPC streaming, WebSocket protocol, SSE, сравнение подходов.
 
@@ -328,7 +328,7 @@ GraphQL schema, .proto, gRPC streaming, WebSocket protocol, SSE, сравнен�
 - REST → [05-api-rest.md](05-api-rest.md)
 - HTTP → [15-api-http-deep.md](15-api-http-deep.md)
 
-## [22-api-caching.md](22-api-caching.md) — Кэширование
+## <a id="22-api-caching-кэширование">[22-api-caching.md](22-api-caching.md) — Кэширование</a>
 
 Cache-Control, ETag, If-None-Match, Redis, TTL, инвалидация, stampede, penetration, avalanche.
 
@@ -336,7 +336,7 @@ Cache-Control, ETag, If-None-Match, Redis, TTL, инвалидация, stampede
 - HTTP → [15-api-http-deep.md](15-api-http-deep.md)
 - Производительность SQL → [11-sql-performance.md](11-sql-performance.md)
 
-## [23-api-monitoring.md](23-api-monitoring.md) — Мониторинг
+## <a id="23-api-monitoring-мониторинг">[23-api-monitoring.md](23-api-monitoring.md) — Мониторинг</a>
 
 Logs, metrics, traces, RED, SLI / SLO / SLA, error budget, алерты, дашборды.
 
@@ -344,7 +344,7 @@ Logs, metrics, traces, RED, SLI / SLO / SLA, error budget, алерты, даш�
 - Кэширование → [22-api-caching.md](22-api-caching.md)
 - Безопасность → [24-api-security.md](24-api-security.md)
 
-## [24-api-security.md](24-api-security.md) — Безопасность
+## <a id="24-api-security-безопасность">[24-api-security.md](24-api-security.md) — Безопасность</a>
 
 OWASP API Top 10, BOLA / IDOR, RBAC / ABAC, маскирование PII, rate limiting, аудит, whitelist полей.
 
@@ -357,7 +357,7 @@ OWASP API Top 10, BOLA / IDOR, RBAC / ABAC, маскирование PII, rate l
 
 # 🔄 Workflow
 
-## [09-sql-api-workflow.md](09-sql-api-workflow.md) — Сквозной процесс
+## <a id="09-sql-api-workflow-сквозной-процесс">[09-sql-api-workflow.md](09-sql-api-workflow.md) — Сквозной процесс</a>
 
 Как связаны SQL и API, типовой workflow аналитика, сквозной кейс
 «Синхронизация заказов», шаблоны документов, чек-листы.
@@ -369,9 +369,9 @@ OWASP API Top 10, BOLA / IDOR, RBAC / ABAC, маскирование PII, rate l
 
 ---
 
-# 🧪 Практика
+# <a id="практика">🧪 Практика</a>
 
-## [25-quiz.md](25-quiz.md) — Тесты для самопроверки
+## <a id="25-quiz-тесты-для-самопроверки">[25-quiz.md](25-quiz.md) — Тесты для самопроверки</a>
 
 25 интерактивных вопросов по всем ключевым темам справочника. Написаны на
 Markdown с использованием плагина `mkdocs-quiz`.
@@ -419,11 +419,11 @@ Markdown с использованием плагина `mkdocs-quiz`.
 
 ---
 
-# 🗺️ Сквозные темы (карта связей)
+# <a id="сквозные-темы-карта-связей">🗺️ Сквозные темы (карта связей)</a>
 
 Маршруты по файлам для типовых рабочих ситуаций.
 
-## Тема: «Синхронизация данных между системами»
+## <a id="тема-синхронизация-данных-между-системами">Тема: «Синхронизация данных между системами»</a>
 
 **Сначала:** [00-sql-api-overview.md](00-sql-api-overview.md), раздел 4.
 
@@ -435,7 +435,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 6. [23-api-monitoring.md](23-api-monitoring.md) — наблюдаемость
 7. [25-quiz.md](25-quiz.md) — проверка по разделу «API: Интеграции»
 
-## Тема: «Проектирование нового API»
+## <a id="тема-проектирование-нового-api">Тема: «Проектирование нового API»</a>
 
 **Сначала:** [00-sql-api-overview.md](00-sql-api-overview.md), раздел 3.
 
@@ -447,7 +447,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 6. [20-api-testing.md](20-api-testing.md) — проверка
 7. [25-quiz.md](25-quiz.md) — проверка по разделам «API: REST и HTTP», «API: Проектирование», «API: Безопасность»
 
-## Тема: «Анализ данных и метрики»
+## <a id="тема-анализ-данных-и-метрики">Тема: «Анализ данных и метрики»</a>
 
 **Сначала:** [00-sql-api-overview.md](00-sql-api-overview.md), раздел 2.
 
@@ -459,14 +459,14 @@ Markdown с использованием плагина `mkdocs-quiz`.
 6. [14-sql-analytics.md](14-sql-analytics.md) — retention, RFM, воронки
 7. [25-quiz.md](25-quiz.md) — проверка по разделам «SQL: *»
 
-## Тема: «Производительность»
+## <a id="тема-производительность">Тема: «Производительность»</a>
 
 1. [11-sql-performance.md](11-sql-performance.md) — индексы, EXPLAIN
 2. [22-api-caching.md](22-api-caching.md) — кэш
 3. [23-api-monitoring.md](23-api-monitoring.md) — метрики и алерты
 4. [16-api-design-patterns.md](16-api-design-patterns.md) — пагинация
 
-## Тема: «Работа с ошибками»
+## <a id="тема-работа-с-ошибками">Тема: «Работа с ошибками»</a>
 
 1. [15-api-http-deep.md](15-api-http-deep.md) — статус-коды
 2. [16-api-design-patterns.md](16-api-design-patterns.md) — формат ошибок
@@ -475,7 +475,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 5. [23-api-monitoring.md](23-api-monitoring.md) — алерты
 6. [25-quiz.md](25-quiz.md) — проверка по разделу «API: Идемпотентность»
 
-## Тема: «Безопасность»
+## <a id="тема-безопасность">Тема: «Безопасность»</a>
 
 1. [24-api-security.md](24-api-security.md) — OWASP, атаки
 2. [06-api-auth.md](06-api-auth.md) — токены
@@ -485,12 +485,12 @@ Markdown с использованием плагина `mkdocs-quiz`.
 
 ---
 
-# 🎓 Учебные треки
+# <a id="учебные-треки">🎓 Учебные треки</a>
 
 Три трека, рассчитанные на разные уровни. Каждый трек начинается с обзора,
 заканчивается тестами.
 
-## Трек «Junior системный аналитик» (4 недели)
+## <a id="трек-junior-системный-аналитик-4-недели">Трек «Junior системный аналитик» (4 недели)</a>
 
 **Неделя 0 — вводная:** [00-sql-api-overview.md](00-sql-api-overview.md)
 
@@ -507,7 +507,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 **Результат:** пишете запросы средней сложности, понимаете контракты API,
 знаете, как описать простую интеграцию.
 
-## Трек «Middle системный аналитик» (8 недель)
+## <a id="трек-middle-системный-аналитик-8-недель">Трек «Middle системный аналитик» (8 недель)</a>
 
 **Начните с:** [00-sql-api-overview.md](00-sql-api-overview.md)
 
@@ -527,7 +527,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 **Результат:** проектируете API, описываете интеграции, диагностируете
 проблемы с данными.
 
-## Трек «Senior системный аналитик» (12 недель)
+## <a id="трек-senior-системный-аналитик-12-недель">Трек «Senior системный аналитик» (12 недель)</a>
 
 **Начните с:** [00-sql-api-overview.md](00-sql-api-overview.md)
 
@@ -549,7 +549,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 
 ---
 
-# 🔍 Предметный указатель
+# <a id="предметный-указатель">🔍 Предметный указатель</a>
 
 ### 0
 - **Обзор темы** → [00-sql-api-overview.md](00-sql-api-overview.md)
@@ -666,7 +666,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 
 ---
 
-# 📊 Матрица покрытия навыков
+# <a id="матрица-покрытия-навыков">📊 Матрица покрытия навыков</a>
 
 | Навык | Файлы |
 |---|---|
@@ -692,7 +692,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 
 ---
 
-# ✅ Как пользоваться справочником
+# <a id="как-пользоваться-справочником">✅ Как пользоваться справочником</a>
 
 **Если учитесь с нуля:**
 
@@ -724,7 +724,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 
 ---
 
-# 📝 Соглашения
+# <a id="соглашения">📝 Соглашения</a>
 
 - **Обзорный файл** — `00-sql-api-overview.md` — сжат в одну страницу.
 - **Файл тестов** — `25-quiz.md` — использует синтаксис `mkdocs-quiz`.
@@ -734,7 +734,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 
 ---
 
-# 🔗 Внешние ресурсы
+# <a id="внешние-ресурсы">🔗 Внешние ресурсы</a>
 
 - **PostgreSQL docs** — https://www.postgresql.org/docs/
 - **OpenAPI spec** — https://spec.openapis.org/oas/latest.html
@@ -746,7 +746,7 @@ Markdown с использованием плагина `mkdocs-quiz`.
 
 ---
 
-# 🚧 Что дальше
+# <a id="что-дальше">🚧 Что дальше</a>
 
 Справочник развивается. В планах:
 

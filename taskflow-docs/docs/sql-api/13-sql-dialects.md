@@ -1,6 +1,6 @@
-# SQL: диалекты СУБД
+# <a id="sql-диалекты-субд">SQL: диалекты СУБД</a>
 
-## Содержание
+## <a id="содержание">Содержание</a>
 
 1. Зачем аналитику знать диалекты
 2. Сравнительная таблица
@@ -15,7 +15,7 @@
 
 ---
 
-## 1. Зачем аналитику знать диалекты
+## <a id="1-зачем-аналитику-знать-диалекты">1. Зачем аналитику знать диалекты</a>
 
 SQL — стандарт, но каждая СУБД добавляет своё. Аналитик переходит между проектами, где PostgreSQL, MySQL, MS SQL, Oracle. Один и тот же запрос может не работать.
 
@@ -23,7 +23,7 @@ SQL — стандарт, но каждая СУБД добавляет своё
 
 ---
 
-## 2. Сравнительная таблица
+## <a id="2-сравнительная-таблица">2. Сравнительная таблица</a>
 
 | Возможность | PostgreSQL | MySQL | MS SQL | Oracle |
 |---|---|---|---|---|
@@ -39,7 +39,7 @@ SQL — стандарт, но каждая СУБД добавляет своё
 
 ---
 
-## 3. Ограничение строк
+## <a id="3-ограничение-строк">3. Ограничение строк</a>
 
 ### PostgreSQL / MySQL
 
@@ -74,9 +74,9 @@ SELECT * FROM (
 
 ---
 
-## 4. Работа со строками
+## <a id="4-работа-со-строками">4. Работа со строками</a>
 
-### Конкатенация
+### <a id="конкатенация">Конкатенация</a>
 
 ```sql
 -- PostgreSQL / Oracle
@@ -89,7 +89,7 @@ SELECT CONCAT(first_name, ' ', last_name) FROM users;
 SELECT first_name + ' ' + last_name FROM users;
 ```
 
-### Длина строки
+### <a id="длина-строки">Длина строки</a>
 
 ```sql
 -- PostgreSQL / MySQL
@@ -99,7 +99,7 @@ SELECT LENGTH(name);
 SELECT LEN(name) FROM users;
 ```
 
-### Поиск подстроки
+### <a id="поиск-подстроки">Поиск подстроки</a>
 
 ```sql
 -- PostgreSQL
@@ -112,14 +112,14 @@ SELECT LOCATE('@', email) FROM users;
 SELECT CHARINDEX('@', email) FROM users;
 ```
 
-### Регистр
+### <a id="регистр">Регистр</a>
 
 ```sql
 -- везде
 SELECT LOWER(email), UPPER(name);
 ```
 
-### Регистронезависимый LIKE
+### <a id="регистронезависимый-like">Регистронезависимый LIKE</a>
 
 ```sql
 -- PostgreSQL
@@ -134,9 +134,9 @@ WHERE email LIKE '%gmail%' COLLATE SQL_Latin1_General_CP1_CI_AS
 
 ---
 
-## 5. Работа с датами
+## <a id="5-работа-с-датами">5. Работа с датами</a>
 
-### Текущее время
+### <a id="текущее-время">Текущее время</a>
 
 | СУБД | Функция |
 |---|---|
@@ -145,7 +145,7 @@ WHERE email LIKE '%gmail%' COLLATE SQL_Latin1_General_CP1_CI_AS
 | MS SQL | `GETDATE()`, `SYSDATETIME()` |
 | Oracle | `SYSDATE`, `SYSTIMESTAMP` |
 
-### Усечение
+### <a id="усечение">Усечение</a>
 
 ```sql
 -- PostgreSQL
@@ -161,7 +161,7 @@ SELECT DATEFROMPARTS(YEAR(created_at), MONTH(created_at), 1) FROM orders;
 SELECT TRUNC(created_at, 'MM') FROM orders;
 ```
 
-### Разница между датами
+### <a id="разница-между-датами">Разница между датами</a>
 
 ```sql
 -- PostgreSQL
@@ -179,15 +179,15 @@ SELECT (delivered_at - created_at) * 24 FROM orders;  -- в часах
 
 ---
 
-## 6. Работа с NULL
+## <a id="6-работа-с-null">6. Работа с NULL</a>
 
-### COALESCE — везде
+### <a id="coalesce-везде">COALESCE — везде</a>
 
 ```sql
 SELECT COALESCE(phone, 'не указан') FROM users;
 ```
 
-### Аналоги
+### <a id="аналоги">Аналоги</a>
 
 | СУБД | Функция |
 |---|---|
@@ -196,7 +196,7 @@ SELECT COALESCE(phone, 'не указан') FROM users;
 | MS SQL | `COALESCE`, `ISNULL`, `NULLIF` |
 | Oracle | `COALESCE`, `NVL`, `NULLIF` |
 
-### Проверка NULL
+### <a id="проверка-null">Проверка NULL</a>
 
 ```sql
 -- везде
@@ -204,7 +204,7 @@ WHERE phone IS NULL
 WHERE phone IS NOT NULL
 ```
 
-### Условная замена
+### <a id="условная-замена">Условная замена</a>
 
 ```sql
 -- PostgreSQL / MySQL / MS SQL
@@ -247,7 +247,7 @@ WHEN NOT MATCHED THEN INSERT (external_id, total) VALUES (src.external_id, src.t
 
 ---
 
-## 8. Оконные функции
+## <a id="8-оконные-функции">8. Оконные функции</a>
 
 Оконные функции есть в PostgreSQL, MySQL 8+, MS SQL, Oracle. Синтаксис одинаковый:
 
@@ -279,13 +279,13 @@ SELECT JSON_EXTRACT(data, '$.name') FROM events;
 SELECT * FROM events WHERE JSON_EXTRACT(data, '$.type') = 'purchase';
 ```
 
-### MS SQL
+### <a id="ms-sql-2">MS SQL</a>
 
 ```sql
 SELECT JSON_VALUE(data, '$.name') FROM events;
 ```
 
-### Oracle
+### <a id="oracle-2">Oracle</a>
 
 ```sql
 SELECT JSON_VALUE(data, '$.name') FROM events;
@@ -293,7 +293,7 @@ SELECT JSON_VALUE(data, '$.name') FROM events;
 
 ---
 
-## 10. Чек-лист
+## <a id="10-чек-лист">10. Чек-лист</a>
 
 - [ ] Знаю, как ограничивать строки в 4 СУБД
 - [ ] Умею конкатенировать строки в разных диалектах

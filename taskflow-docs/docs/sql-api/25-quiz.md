@@ -1,4 +1,4 @@
-# 🧪 Тесты по SQL и API
+# <a id="тесты-по-sql-и-api">🧪 Тесты по SQL и API</a>
 
 > **Как проходить:** выберите ответ и нажмите «Проверить».
 > Прогресс сохраняется в браузере.
@@ -9,7 +9,7 @@
 
 ---
 
-## SQL: Основы
+## <a id="sql-основы">SQL: Основы</a>
 
 📖 **Перечитать:** [01-sql-basics.md](01-sql-basics.md)
 
@@ -21,7 +21,7 @@
 - [ ] Имена пользователей младше 18 лет
 - [ ] Ошибку
 
-📖 [01-sql-basics.md](01-sql-basics.md) → раздел 3 «WHERE — фильтрация»
+📖 [01-sql-basics.md](01-sql-basics.md) → [раздел 3 «WHERE — фильтрация»](01-sql-basics.md#3-where-фильтрация)
 </quiz>
 
 <quiz>
@@ -32,7 +32,7 @@
 - [ ] `SORT BY`
 - [ ] `ARRANGE BY`
 
-📖 [01-sql-basics.md](01-sql-basics.md) → раздел 4 «ORDER BY»
+📖 [01-sql-basics.md](01-sql-basics.md) → [раздел 4 «ORDER BY»](01-sql-basics.md#4-order-by-сортировка)
 </quiz>
 
 <quiz>
@@ -45,7 +45,7 @@
 
 В SQL трёхзначная логика. Для проверки на NULL используют `IS NULL`.
 
-📖 [01-sql-basics.md](01-sql-basics.md) → раздел 5 «NULL — главная ловушка»
+📖 [01-sql-basics.md](01-sql-basics.md) → [раздел 5 «NULL — главная ловушка»](01-sql-basics.md#основные-операторы)
 </quiz>
 
 <quiz>
@@ -56,7 +56,7 @@
 - [ ] `GROUP BY`
 - [ ] `LIMIT`
 
-📖 [01-sql-basics.md](01-sql-basics.md) → раздел 3 «WHERE — фильтрация»
+📖 [01-sql-basics.md](01-sql-basics.md) → [раздел 3 «WHERE — фильтрация»](01-sql-basics.md#3-where-фильтрация)
 </quiz>
 
 <quiz>
@@ -67,7 +67,7 @@
 - [ ] `DISTINCT` быстрее
 - [ ] `GROUP BY` работает только с числами
 
-📖 [01-sql-basics.md](01-sql-basics.md) → раздел 6 «DISTINCT»
+📖 [01-sql-basics.md](01-sql-basics.md) → [раздел 6 «DISTINCT»](01-sql-basics.md#6-distinct-уникальные-значения)
 </quiz>
 
 <quiz>
@@ -80,7 +80,7 @@
 
 `%` — любое количество символов, `_` — один символ.
 
-📖 [01-sql-basics.md](01-sql-basics.md) → раздел 3.1 «Основные операторы»
+📖 [01-sql-basics.md](01-sql-basics.md) → [раздел 3.1 «Основные операторы»](01-sql-basics.md#основные-операторы)
 </quiz>
 
 <quiz>
@@ -91,7 +91,7 @@
 - [ ] Всегда `'не указан'`
 - [ ] Ошибку, если `phone` = NULL
 
-📖 [01-sql-basics.md](01-sql-basics.md) → раздел 5 «COALESCE и NULLIF»
+📖 [01-sql-basics.md](01-sql-basics.md) → [раздел 5 «COALESCE и NULLIF»](01-sql-basics.md#coalesce-и-nullif)
 </quiz>
 
 <quiz>
@@ -102,7 +102,7 @@
 - [ ] `FETCH`
 - [ ] `ROWNUM`
 
-📖 [13-sql-dialects.md](13-sql-dialects.md) → раздел 3 «Ограничение строк»
+📖 [13-sql-dialects.md](13-sql-dialects.md) → [раздел 3 «Ограничение строк»](13-sql-dialects.md#3-ограничение-строк)
 </quiz>
 
 ---
@@ -119,7 +119,7 @@
 - [ ] `RIGHT JOIN`
 - [ ] `FULL JOIN`
 
-📖 [02-sql-joins.md](02-sql-joins.md) → раздел 5 «LEFT JOIN»
+📖 [02-sql-joins.md](02-sql-joins.md) → [раздел 5 «LEFT JOIN»](02-sql-joins.md#4-left-join)
 </quiz>
 
 <quiz>
@@ -130,7 +130,7 @@
 - [ ] `SELECT u.id FROM users WHERE id NOT IN (SELECT user_id FROM orders);`
 - [ ] `SELECT u.id FROM users CROSS JOIN orders;`
 
-📖 [02-sql-joins.md](02-sql-joins.md) → раздел 5.1 «Анти-джойн»
+📖 [02-sql-joins.md](02-sql-joins.md) → [раздел 5.1 «Анти-джойн»](02-sql-joins.md#4-left-join)
 </quiz>
 
 <quiz>
@@ -141,7 +141,7 @@
 - [ ] Запрос вернёт ошибку
 - [ ] Появятся дубли
 
-📖 [02-sql-joins.md](02-sql-joins.md) → раздел 9 «ON vs WHERE»
+📖 [02-sql-joins.md](02-sql-joins.md) → [раздел 9 «ON vs WHERE»](02-sql-joins.md#10-типичные-ошибки)
 </quiz>
 
 <quiz>
@@ -152,7 +152,7 @@
 - [ ] Ошибка синтаксиса
 - [ ] Ускорение запроса
 
-📖 [02-sql-joins.md](02-sql-joins.md) → раздел 10 «Ловушка: размножение строк»
+📖 [02-sql-joins.md](02-sql-joins.md) → [раздел 10 «Ловушка: размножение строк»](02-sql-joins.md#пример-ловушки-с-дублями)
 </quiz>
 
 <quiz>
@@ -163,7 +163,7 @@
 - [ ] `FULL JOIN`
 - [ ] `CROSS JOIN`
 
-📖 [02-sql-joins.md](02-sql-joins.md) → раздел 3 «INNER JOIN»
+📖 [02-sql-joins.md](02-sql-joins.md) → [раздел 3 «INNER JOIN»](02-sql-joins.md#3-inner-join)
 </quiz>
 
 <quiz>
@@ -174,7 +174,7 @@
 - [ ] `RIGHT JOIN`
 - [x] `FULL JOIN`
 
-📖 [02-sql-joins.md](02-sql-joins.md) → раздел 7 «FULL JOIN»
+📖 [02-sql-joins.md](02-sql-joins.md) → [раздел 7 «FULL JOIN»](02-sql-joins.md#6-full-join)
 </quiz>
 
 <quiz>
@@ -185,7 +185,7 @@
 - [ ] `OUTER JOIN`
 - [ ] `NATURAL JOIN`
 
-📖 [02-sql-joins.md](02-sql-joins.md) → раздел 11 «SELF JOIN»
+📖 [02-sql-joins.md](02-sql-joins.md) → [раздел 11 «SELF JOIN»](02-sql-joins.md#8-self-join)
 </quiz>
 
 <quiz>
@@ -198,12 +198,12 @@
 
 Декартово произведение: 5 × 3 = 15.
 
-📖 [02-sql-joins.md](02-sql-joins.md) → раздел 7 «CROSS JOIN»
+📖 [02-sql-joins.md](02-sql-joins.md) → [раздел 7 «CROSS JOIN»](02-sql-joins.md#7-cross-join)
 </quiz>
 
 ---
 
-## SQL: Агрегация
+## <a id="sql-агрегация">SQL: Агрегация</a>
 
 📖 **Перечитать:** [03-sql-aggregation.md](03-sql-aggregation.md)
 
@@ -215,7 +215,7 @@
 - [ ] `COUNT(*)` считает уникальные строки
 - [ ] `COUNT(email)` работает быстрее
 
-📖 [03-sql-aggregation.md](03-sql-aggregation.md) → раздел 2 «COUNT(*) vs COUNT(col)»
+📖 [03-sql-aggregation.md](03-sql-aggregation.md) → [раздел 2 «COUNT(*) vs COUNT(col)»](03-sql-aggregation.md#1-агрегатные-функции)
 </quiz>
 
 <quiz>
@@ -226,7 +226,7 @@
 - [ ] В `ORDER BY`
 - [ ] В `GROUP BY`
 
-📖 [03-sql-aggregation.md](03-sql-aggregation.md) → раздел 5 «HAVING vs WHERE»
+📖 [03-sql-aggregation.md](03-sql-aggregation.md) → [раздел 5 «HAVING vs WHERE»](03-sql-aggregation.md#where-vs-having)
 </quiz>
 
 <quiz>
@@ -237,7 +237,7 @@
 - [ ] Ошибку
 - [ ] Все заказы
 
-📖 [03-sql-aggregation.md](03-sql-aggregation.md) → раздел 3 «GROUP BY»
+📖 [03-sql-aggregation.md](03-sql-aggregation.md) → [раздел 3 «GROUP BY»](03-sql-aggregation.md#2-group-by)
 </quiz>
 
 <quiz>
@@ -248,7 +248,7 @@
 - [ ] `AVG`
 - [ ] `MAX`
 
-📖 [03-sql-aggregation.md](03-sql-aggregation.md) → раздел 1 «Агрегатные функции»
+📖 [03-sql-aggregation.md](03-sql-aggregation.md) → [раздел 1 «Агрегатные функции»](03-sql-aggregation.md#1-агрегатные-функции)
 </quiz>
 
 <quiz>
@@ -259,7 +259,7 @@
 - [ ] `UNIQUE(col)`
 - [ ] `DISTINCT(col)`
 
-📖 [03-sql-aggregation.md](03-sql-aggregation.md) → раздел 2 «COUNT(*) vs COUNT(col)»
+📖 [03-sql-aggregation.md](03-sql-aggregation.md) → [раздел 2 «COUNT(*) vs COUNT(col)»](03-sql-aggregation.md#1-агрегатные-функции)
 </quiz>
 
 <quiz>
@@ -270,7 +270,7 @@
 - [ ] Количество
 - [ ] Минимум
 
-📖 [03-sql-aggregation.md](03-sql-aggregation.md) → раздел 1 «Агрегатные функции»
+📖 [03-sql-aggregation.md](03-sql-aggregation.md) → [раздел 1 «Агрегатные функции»](03-sql-aggregation.md#1-агрегатные-функции)
 </quiz>
 
 <quiz>
@@ -281,7 +281,7 @@
 - [ ] Для фильтрации строк
 - [ ] Для ускорения запроса
 
-📖 [03-sql-aggregation.md](03-sql-aggregation.md) → раздел 8 «Условная агрегация»
+📖 [03-sql-aggregation.md](03-sql-aggregation.md) → [раздел 8 «Условная агрегация»](03-sql-aggregation.md#условная-агрегация)
 </quiz>
 
 <quiz>
@@ -292,12 +292,12 @@
 - [ ] `HAVING`
 - [ ] `DISTINCT`
 
-📖 [03-sql-aggregation.md](03-sql-aggregation.md) → раздел 3 «GROUP BY»
+📖 [03-sql-aggregation.md](03-sql-aggregation.md) → [раздел 3 «GROUP BY»](03-sql-aggregation.md#2-group-by)
 </quiz>
 
 ---
 
-## SQL: Продвинутый
+## <a id="sql-продвинутый">SQL: Продвинутый</a>
 
 📖 **Перечитать:** [04-sql-advanced.md](04-sql-advanced.md)
 
@@ -309,7 +309,7 @@
 - [ ] Для подсчёта общего количества заказов
 - [ ] Для группировки по пользователю
 
-📖 [04-sql-advanced.md](04-sql-advanced.md) → раздел 3 «ROW_NUMBER»
+📖 [04-sql-advanced.md](04-sql-advanced.md) → [раздел 3 «ROW_NUMBER»](04-sql-advanced.md#row-number-нумерация)
 </quiz>
 
 <quiz>
@@ -320,7 +320,7 @@
 - [ ] Возвращает первую строку
 - [ ] Возвращает последнюю строку
 
-📖 [04-sql-advanced.md](04-sql-advanced.md) → раздел 3.4 «LAG / LEAD»
+📖 [04-sql-advanced.md](04-sql-advanced.md) → [раздел 3.4 «LAG / LEAD»](04-sql-advanced.md#lag-lead-соседние-строки)
 </quiz>
 
 <quiz>
@@ -331,7 +331,7 @@
 - [ ] `LAG`
 - [ ] `LEAD`
 
-📖 [04-sql-advanced.md](04-sql-advanced.md) → раздел 3.2 «ROW_NUMBER — нумерация»
+📖 [04-sql-advanced.md](04-sql-advanced.md) → [раздел 3.2 «ROW_NUMBER — нумерация»](04-sql-advanced.md#row-number-нумерация)
 </quiz>
 
 <quiz>
@@ -342,7 +342,7 @@
 - [ ] `RANK` работает только с числами
 - [ ] `ROW_NUMBER` медленнее
 
-📖 [04-sql-advanced.md](04-sql-advanced.md) → раздел 3.3 «RANK / DENSE_RANK»
+📖 [04-sql-advanced.md](04-sql-advanced.md) → [раздел 3.3 «RANK / DENSE_RANK»](04-sql-advanced.md#rank-dense-rank)
 </quiz>
 
 <quiz>
@@ -353,7 +353,7 @@
 - [ ] Индекс
 - [ ] Триггер
 
-📖 [04-sql-advanced.md](04-sql-advanced.md) → раздел 2 «CTE (WITH)»
+📖 [04-sql-advanced.md](04-sql-advanced.md) → [раздел 2 «CTE (WITH)»](04-sql-advanced.md#2-cte-with)
 </quiz>
 
 <quiz>
@@ -364,7 +364,7 @@
 - [ ] `UNION ALL` работает только с числами
 - [ ] `UNION` быстрее
 
-📖 [04-sql-advanced.md](04-sql-advanced.md) → раздел 4 «UNION / UNION ALL»
+📖 [04-sql-advanced.md](04-sql-advanced.md) → [раздел 4 «UNION / UNION ALL»](04-sql-advanced.md#4-union-union-all)
 </quiz>
 
 <quiz>
@@ -375,7 +375,7 @@
 - [ ] Первое значение
 - [ ] Последнее значение
 
-📖 [04-sql-advanced.md](04-sql-advanced.md) → раздел 3.4 «SUM / AVG OVER»
+📖 [04-sql-advanced.md](04-sql-advanced.md) → [раздел 3.4 «SUM / AVG OVER»](04-sql-advanced.md#sum-avg-over)
 </quiz>
 
 <quiz>
@@ -386,12 +386,12 @@
 - [ ] `ANY`
 - [ ] `ALL`
 
-📖 [04-sql-advanced.md](04-sql-advanced.md) → раздел 1.3 «EXISTS / NOT EXISTS»
+📖 [04-sql-advanced.md](04-sql-advanced.md) → [раздел 1.3 «EXISTS / NOT EXISTS»](04-sql-advanced.md#exists-not-exists)
 </quiz>
 
 ---
 
-## SQL: DDL / DML / Транзакции
+## <a id="sql-ddl-dml-транзакции">SQL: DDL / DML / Транзакции</a>
 
 📖 **Перечитать:** [10-sql-ddl-dml.md](10-sql-ddl-dml.md)
 
@@ -403,7 +403,7 @@
 - [ ] `CHECK`
 - [ ] `DEFAULT`
 
-📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → раздел 4 «Ограничения целостности»
+📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → [раздел 4 «Ограничения целостности»](10-sql-ddl-dml.md#4-ограничения-целостности)
 </quiz>
 
 <quiz>
@@ -414,7 +414,7 @@
 - [ ] Устанавливает NULL
 - [ ] Логирует удаление
 
-📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → раздел 4 «Поведение при удалении родителя»
+📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → [раздел 4 «Поведение при удалении родителя»](10-sql-ddl-dml.md#поведение-при-удалении-родителя)
 </quiz>
 
 <quiz>
@@ -425,7 +425,7 @@
 - [ ] Atomic, Commit, Insert, Delete
 - [ ] Альтернативный способ транзакций
 
-📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → раздел 5 «Транзакции и ACID»
+📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → [раздел 5 «Транзакции и ACID»](10-sql-ddl-dml.md#5-транзакции-и-acid)
 </quiz>
 
 <quiz>
@@ -436,7 +436,7 @@
 - [ ] `MERGE`
 - [ ] `UPSERT`
 
-📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → раздел 3 «UPSERT»
+📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → [раздел 3 «UPSERT»](10-sql-ddl-dml.md#upsert-insert-on-conflict)
 </quiz>
 
 <quiz>
@@ -447,7 +447,7 @@
 - [x] Обновятся все строки таблицы
 - [ ] Обновится первая строка
 
-📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → раздел 3 «UPDATE»
+📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → [раздел 3 «UPDATE»](10-sql-ddl-dml.md#update)
 </quiz>
 
 <quiz>
@@ -458,7 +458,7 @@
 - [ ] Удалить таблицу
 - [ ] Создать индекс
 
-📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → раздел 5 «Транзакции и ACID»
+📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → [раздел 5 «Транзакции и ACID»](10-sql-ddl-dml.md#5-транзакции-и-acid)
 </quiz>
 
 <quiz>
@@ -469,7 +469,7 @@
 - [ ] Индекс
 - [ ] Триггер
 
-📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → раздел 6 «MATERIALIZED VIEW»
+📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → [раздел 6 «MATERIALIZED VIEW»](10-sql-ddl-dml.md#6-view-и-materialized-view)
 </quiz>
 
 <quiz>
@@ -480,12 +480,12 @@
 - [ ] `CHECK`
 - [ ] `NOT NULL`
 
-📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → раздел 4 «Ограничения целостности»
+📖 [10-sql-ddl-dml.md](10-sql-ddl-dml.md) → [раздел 4 «Ограничения целостности»](10-sql-ddl-dml.md#4-ограничения-целостности)
 </quiz>
 
 ---
 
-## SQL: Производительность
+## <a id="sql-производительность">SQL: Производительность</a>
 
 📖 **Перечитать:** [11-sql-performance.md](11-sql-performance.md)
 
@@ -497,7 +497,7 @@
 - [ ] Для сжатия данных
 - [ ] Для шифрования
 
-📖 [11-sql-performance.md](11-sql-performance.md) → раздел 3 «Индексы»
+📖 [11-sql-performance.md](11-sql-performance.md) → [раздел 3 «Индексы»](11-sql-performance.md#3-индексы)
 </quiz>
 
 <quiz>
@@ -508,7 +508,7 @@
 - [ ] Список индексов
 - [ ] Права доступа
 
-📖 [11-sql-performance.md](11-sql-performance.md) → раздел 4 «EXPLAIN ANALYZE»
+📖 [11-sql-performance.md](11-sql-performance.md) → [раздел 4 «EXPLAIN ANALYZE»](11-sql-performance.md#explain-analyze)
 </quiz>
 
 <quiz>
@@ -519,7 +519,7 @@
 - [ ] Возвращает неверный результат
 - [ ] Работает только с MS SQL
 
-📖 [11-sql-performance.md](11-sql-performance.md) → раздел 5 «Антипаттерны»
+📖 [11-sql-performance.md](11-sql-performance.md) → [раздел 5 «Антипаттерны»](11-sql-performance.md#5-антипаттерны)
 </quiz>
 
 <quiz>
@@ -530,7 +530,7 @@
 - [ ] `SHOW PLAN`
 - [ ] `DESCRIBE`
 
-📖 [11-sql-performance.md](11-sql-performance.md) → раздел 4 «EXPLAIN»
+📖 [11-sql-performance.md](11-sql-performance.md) → [раздел 4 «EXPLAIN»](11-sql-performance.md#explain)
 </quiz>
 
 <quiz>
@@ -541,7 +541,7 @@
 - [ ] Когда `%` стоит в конце
 - [ ] Только в MySQL
 
-📖 [11-sql-performance.md](11-sql-performance.md) → раздел 3.4 «Когда индекс НЕ помогает»
+📖 [11-sql-performance.md](11-sql-performance.md) → [раздел 3.4 «Когда индекс НЕ помогает»](11-sql-performance.md#когда-индекс-не-помогает)
 </quiz>
 
 <quiz>
@@ -552,7 +552,7 @@
 - [ ] Создание индекса
 - [ ] Резервное копирование
 
-📖 [11-sql-performance.md](11-sql-performance.md) → раздел 6 «Партиционирование»
+📖 [11-sql-performance.md](11-sql-performance.md) → [раздел 6 «Партиционирование»](11-sql-performance.md#6-партиционирование)
 </quiz>
 
 <quiz>
@@ -563,12 +563,12 @@
 - [ ] `deleted`
 - [ ] `archived`
 
-📖 [11-sql-performance.md](11-sql-performance.md) → раздел 3.3 «Частичный индекс»
+📖 [11-sql-performance.md](11-sql-performance.md) → [раздел 3.3 «Частичный индекс»](11-sql-performance.md#частичный-индекс)
 </quiz>
 
 ---
 
-## SQL: Даты и TZ
+## <a id="sql-даты-и-tz">SQL: Даты и TZ</a>
 
 📖 **Перечитать:** [12-sql-dates.md](12-sql-dates.md)
 
@@ -580,7 +580,7 @@
 - [x] `TIMESTAMPTZ`
 - [ ] `TIME`
 
-📖 [12-sql-dates.md](12-sql-dates.md) → раздел 3 «TIMESTAMP vs TIMESTAMPTZ»
+📖 [12-sql-dates.md](12-sql-dates.md) → [раздел 3 «TIMESTAMP vs TIMESTAMPTZ»](12-sql-dates.md#3-timestamp-vs-timestamptz)
 </quiz>
 
 <quiz>
@@ -591,7 +591,7 @@
 - [ ] Возвращает месяц как число
 - [ ] Удаляет дату
 
-📖 [12-sql-dates.md](12-sql-dates.md) → раздел 4.3 «Усечение до периода»
+📖 [12-sql-dates.md](12-sql-dates.md) → [раздел 4.3 «Усечение до периода»](12-sql-dates.md#усечение-до-периода)
 </quiz>
 
 <quiz>
@@ -602,7 +602,7 @@
 - [ ] `SYSDATE`
 - [ ] `GETDATE()`
 
-📖 [12-sql-dates.md](12-sql-dates.md) → раздел 4.1 «Текущее время»
+📖 [12-sql-dates.md](12-sql-dates.md) → [раздел 4.1 «Текущее время»](12-sql-dates.md#текущее-время)
 </quiz>
 
 <quiz>
@@ -613,7 +613,7 @@
 - [ ] Для соединения таблиц
 - [ ] Для агрегации
 
-📖 [12-sql-dates.md](12-sql-dates.md) → раздел 7 «Генерация дат»
+📖 [12-sql-dates.md](12-sql-dates.md) → [раздел 7 «Генерация дат»](12-sql-dates.md#7-генерация-дат)
 </quiz>
 
 <quiz>
@@ -624,7 +624,7 @@
 - [ ] Дату 7 дней вперёд
 - [ ] Ошибку
 
-📖 [12-sql-dates.md](12-sql-dates.md) → раздел 6 «Интервалы»
+📖 [12-sql-dates.md](12-sql-dates.md) → [раздел 6 «Интервалы»](12-sql-dates.md#6-интервалы)
 </quiz>
 
 <quiz>
@@ -635,7 +635,7 @@
 - [ ] `CONVERT_TZ('MSK')`
 - [ ] `TO_MOSCOW()`
 
-📖 [12-sql-dates.md](12-sql-dates.md) → раздел 5 «Часовые пояса»
+📖 [12-sql-dates.md](12-sql-dates.md) → [раздел 5 «Часовые пояса»](12-sql-dates.md#5-часовые-пояса)
 </quiz>
 
 <quiz>
@@ -646,12 +646,12 @@
 - [ ] `DATE_PART`
 - [ ] `TO_CHAR`
 
-📖 [12-sql-dates.md](12-sql-dates.md) → раздел 4.3 «Усечение до периода»
+📖 [12-sql-dates.md](12-sql-dates.md) → [раздел 4.3 «Усечение до периода»](12-sql-dates.md#усечение-до-периода)
 </quiz>
 
 ---
 
-## SQL: Диалекты СУБД
+## <a id="sql-диалекты-субд">SQL: Диалекты СУБД</a>
 
 📖 **Перечитать:** [13-sql-dialects.md](13-sql-dialects.md)
 
@@ -663,7 +663,7 @@
 - [ ] `FETCH FIRST 10`
 - [ ] `ROWNUM <= 10`
 
-📖 [13-sql-dialects.md](13-sql-dialects.md) → раздел 3 «Ограничение строк»
+📖 [13-sql-dialects.md](13-sql-dialects.md) → [раздел 3 «Ограничение строк»](13-sql-dialects.md#3-ограничение-строк)
 </quiz>
 
 <quiz>
@@ -674,7 +674,7 @@
 - [x] `NVL`
 - [ ] `COALESCE` только
 
-📖 [13-sql-dialects.md](13-sql-dialects.md) → раздел 6 «Работа с NULL»
+📖 [13-sql-dialects.md](13-sql-dialects.md) → [раздел 6 «Работа с NULL»](13-sql-dialects.md#6-работа-с-null)
 </quiz>
 
 <quiz>
@@ -685,7 +685,7 @@
 - [ ] `IDENTITY`
 - [ ] `SEQUENCE`
 
-📖 [13-sql-dialects.md](13-sql-dialects.md) → раздел 2 «Сравнительная таблица»
+📖 [13-sql-dialects.md](13-sql-dialects.md) → [раздел 2 «Сравнительная таблица»](13-sql-dialects.md#2-сравнительная-таблица)
 </quiz>
 
 <quiz>
@@ -696,7 +696,7 @@
 - [x] `FETCH FIRST 10 ROWS ONLY`
 - [ ] `FIRST 10`
 
-📖 [13-sql-dialects.md](13-sql-dialects.md) → раздел 3 «Ограничение строк»
+📖 [13-sql-dialects.md](13-sql-dialects.md) → [раздел 3 «Ограничение строк»](13-sql-dialects.md#3-ограничение-строк)
 </quiz>
 
 <quiz>
@@ -707,7 +707,7 @@
 - [x] `COALESCE`
 - [ ] `IFNULL`
 
-📖 [13-sql-dialects.md](13-sql-dialects.md) → раздел 6 «Работа с NULL»
+📖 [13-sql-dialects.md](13-sql-dialects.md) → [раздел 6 «Работа с NULL»](13-sql-dialects.md#6-работа-с-null)
 </quiz>
 
 <quiz>
@@ -718,12 +718,12 @@
 - [ ] `MERGE`
 - [ ] `UPSERT INTO`
 
-📖 [13-sql-dialects.md](13-sql-dialects.md) → раздел 7 «UPSERT»
+📖 [13-sql-dialects.md](13-sql-dialects.md) → [раздел 7 «UPSERT»](13-sql-dialects.md#7-upsert)
 </quiz>
 
 ---
 
-## SQL: Аналитика
+## <a id="sql-аналитика">SQL: Аналитика</a>
 
 📖 **Перечитать:** [14-sql-analytics.md](14-sql-analytics.md)
 
@@ -735,7 +735,7 @@
 - [ ] Для моды
 - [ ] Для суммы
 
-📖 [14-sql-analytics.md](14-sql-analytics.md) → раздел 2 «Перцентили и медиана»
+📖 [14-sql-analytics.md](14-sql-analytics.md) → [раздел 2 «Перцентили и медиана»](14-sql-analytics.md#2-перцентили-и-медиана)
 </quiz>
 
 <quiz>
@@ -746,7 +746,7 @@
 - [ ] Она быстрее
 - [ ] Она работает только с числами
 
-📖 [14-sql-analytics.md](14-sql-analytics.md) → раздел 2 «Перцентили и медиана»
+📖 [14-sql-analytics.md](14-sql-analytics.md) → [раздел 2 «Перцентили и медиана»](14-sql-analytics.md#2-перцентили-и-медиана)
 </quiz>
 
 <quiz>
@@ -757,7 +757,7 @@
 - [ ] Отток клиентов
 - [ ] Стоимость привлечения
 
-📖 [14-sql-analytics.md](14-sql-analytics.md) → раздел 5 «Retention»
+📖 [14-sql-analytics.md](14-sql-analytics.md) → [раздел 5 «Retention»](14-sql-analytics.md#5-retention)
 </quiz>
 
 <quiz>
@@ -768,7 +768,7 @@
 - [ ] `ROW_NUMBER`
 - [ ] `DENSE_RANK`
 
-📖 [14-sql-analytics.md](14-sql-analytics.md) → раздел 2 «NTILE — разбить на группы»
+📖 [14-sql-analytics.md](14-sql-analytics.md) → [раздел 2 «NTILE — разбить на группы»](14-sql-analytics.md#ntile-разбить-на-группы)
 </quiz>
 
 <quiz>
@@ -779,7 +779,7 @@
 - [ ] Сравнение двух периодов
 - [ ] Прогноз
 
-📖 [14-sql-analytics.md](14-sql-analytics.md) → раздел 4 «Когортный анализ»
+📖 [14-sql-analytics.md](14-sql-analytics.md) → [раздел 4 «Когортный анализ»](14-sql-analytics.md#4-когортный-анализ)
 </quiz>
 
 <quiz>
@@ -790,7 +790,7 @@
 - [ ] Считают среднее
 - [ ] Работают как `AVG`
 
-📖 [14-sql-analytics.md](14-sql-analytics.md) → раздел 2.3 «PERCENTILE_CONT vs PERCENTILE_DISC»
+📖 [14-sql-analytics.md](14-sql-analytics.md) → [раздел 2.3 «PERCENTILE_CONT vs PERCENTILE_DISC»](14-sql-analytics.md#percentile-cont-vs-percentile-disc)
 </quiz>
 
 <quiz>
@@ -801,12 +801,12 @@
 - [ ] Range, Formula, Model
 - [ ] Report, Filter, Map
 
-📖 [14-sql-analytics.md](14-sql-analytics.md) → раздел 7 «RFM-анализ»
+📖 [14-sql-analytics.md](14-sql-analytics.md) → [раздел 7 «RFM-анализ»](14-sql-analytics.md#7-rfm-анализ)
 </quiz>
 
 ---
 
-## API: REST и HTTP
+## <a id="api-rest-и-http">API: REST и HTTP</a>
 
 📖 **Перечитать:** [05-api-rest.md](05-api-rest.md) и [15-api-http-deep.md](15-api-http-deep.md)
 
@@ -818,7 +818,7 @@
 - [ ] `PATCH`
 - [ ] Ни один
 
-📖 [05-api-rest.md](05-api-rest.md) → раздел 4 «HTTP-методы»
+📖 [05-api-rest.md](05-api-rest.md) → [раздел 4 «HTTP-методы»](05-api-rest.md#4-http-методы)
 </quiz>
 
 <quiz>
@@ -829,7 +829,7 @@
 - [x] Конфликт (например, дубль)
 - [ ] Нет прав
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 5 «4xx — ошибка клиента»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 5 «4xx — ошибка клиента»](15-api-http-deep.md#4xx-ошибка-клиента)
 </quiz>
 
 <quiz>
@@ -840,7 +840,7 @@
 - [ ] `Accept`
 - [ ] `User-Agent`
 
-📖 [05-api-rest.md](05-api-rest.md) → раздел 3.2 «REST: основные понятия»
+📖 [05-api-rest.md](05-api-rest.md) → [раздел 3.2 «REST: основные понятия»](05-api-rest.md#6-структура-запроса)
 </quiz>
 
 <quiz>
@@ -851,7 +851,7 @@
 - [ ] `POST`
 - [ ] `GET`
 
-📖 [05-api-rest.md](05-api-rest.md) → раздел 4 «HTTP-методы»
+📖 [05-api-rest.md](05-api-rest.md) → [раздел 4 «HTTP-методы»](05-api-rest.md#4-http-методы)
 </quiz>
 
 <quiz>
@@ -862,7 +862,7 @@
 - [ ] `202`
 - [ ] `204`
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 5 «2xx — успех»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 5 «2xx — успех»](15-api-http-deep.md#2xx-успех)
 </quiz>
 
 <quiz>
@@ -873,7 +873,7 @@
 - [ ] Ресурс не найден
 - [ ] Ошибка сервера
 
-📖 [06-api-auth.md](06-api-auth.md) → раздел 1 «Аутентификация vs авторизация»
+📖 [06-api-auth.md](06-api-auth.md) → [раздел 1 «Аутентификация vs авторизация»](06-api-auth.md#1-аутентификация-vs-авторизация)
 </quiz>
 
 <quiz>
@@ -884,7 +884,7 @@
 - [ ] Ресурс не найден
 - [ ] Таймаут
 
-📖 [06-api-auth.md](06-api-auth.md) → раздел 1 «Аутентификация vs авторизация»
+📖 [06-api-auth.md](06-api-auth.md) → [раздел 1 «Аутентификация vs авторизация»](06-api-auth.md#1-аутентификация-vs-авторизация)
 </quiz>
 
 <quiz>
@@ -895,12 +895,12 @@
 - [ ] `Authorization`
 - [ ] `User-Agent`
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 6 «Заголовки»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 6 «Заголовки»](15-api-http-deep.md#5-заголовки)
 </quiz>
 
 ---
 
-## API: Аутентификация
+## <a id="api-аутентификация">API: Аутентификация</a>
 
 📖 **Перечитать:** [06-api-auth.md](06-api-auth.md)
 
@@ -912,7 +912,7 @@
 - [ ] Аутентификация — про роли
 - [ ] Авторизация — про пароли
 
-📖 [06-api-auth.md](06-api-auth.md) → раздел 1 «Аутентификация vs авторизация»
+📖 [06-api-auth.md](06-api-auth.md) → [раздел 1 «Аутентификация vs авторизация»](06-api-auth.md#1-аутентификация-vs-авторизация)
 </quiz>
 
 <quiz>
@@ -923,7 +923,7 @@
 - [ ] Протокол
 - [ ] Тип БД
 
-📖 [06-api-auth.md](06-api-auth.md) → раздел 5 «JWT»
+📖 [06-api-auth.md](06-api-auth.md) → [раздел 5 «JWT»](06-api-auth.md#5-jwt-json-web-token)
 </quiz>
 
 <quiz>
@@ -934,7 +934,7 @@
 - [ ] `Token`
 - [ ] `JWT`
 
-📖 [06-api-auth.md](06-api-auth.md) → раздел 5 «JWT»
+📖 [06-api-auth.md](06-api-auth.md) → [раздел 5 «JWT»](06-api-auth.md#5-jwt-json-web-token)
 </quiz>
 
 <quiz>
@@ -945,7 +945,7 @@
 - [ ] Формат данных
 - [ ] База данных
 
-📖 [06-api-auth.md](06-api-auth.md) → раздел 4 «OAuth 2.0»
+📖 [06-api-auth.md](06-api-auth.md) → [раздел 4 «OAuth 2.0»](06-api-auth.md#4-oauth-2-0)
 </quiz>
 
 <quiz>
@@ -956,7 +956,7 @@
 - [ ] `refresh_token` — короче
 - [ ] `access_token` — только для админов
 
-📖 [06-api-auth.md](06-api-auth.md) → раздел 4 «Токены»
+📖 [06-api-auth.md](06-api-auth.md) → [раздел 4 «Токены»](06-api-auth.md#токены)
 </quiz>
 
 <quiz>
@@ -967,7 +967,7 @@
 - [ ] `500`
 - [ ] `404`
 
-📖 [06-api-auth.md](06-api-auth.md) → раздел 6 «Что описывать аналитику»
+📖 [06-api-auth.md](06-api-auth.md) → [раздел 6 «Что описывать аналитику»](06-api-auth.md#6-что-описывать-аналитику)
 </quiz>
 
 ---
@@ -984,7 +984,7 @@
 - [ ] Протокол
 - [ ] База данных
 
-📖 [07-api-openapi.md](07-api-openapi.md) → раздел 1 «Что такое OpenAPI»
+📖 [07-api-openapi.md](07-api-openapi.md) → [раздел 1 «Что такое OpenAPI»](07-api-openapi.md#1-что-такое-openapi)
 </quiz>
 
 <quiz>
@@ -995,7 +995,7 @@
 - [ ] `schemas`
 - [ ] `definitions`
 
-📖 [07-api-openapi.md](07-api-openapi.md) → раздел 4 «Схемы данных»
+📖 [07-api-openapi.md](07-api-openapi.md) → [раздел 4 «Схемы данных»](07-api-openapi.md#4-схемы-данных-components)
 </quiz>
 
 <quiz>
@@ -1006,7 +1006,7 @@
 - [ ] Через `!` в имени
 - [ ] Через `not-null`
 
-📖 [07-api-openapi.md](07-api-openapi.md) → раздел 4 «Схемы данных»
+📖 [07-api-openapi.md](07-api-openapi.md) → [раздел 4 «Схемы данных»](07-api-openapi.md#4-схемы-данных-components)
 </quiz>
 
 <quiz>
@@ -1017,7 +1017,7 @@
 - [ ] Для деплоя
 - [ ] Для логирования
 
-📖 [07-api-openapi.md](07-api-openapi.md) → раздел 7 «Инструменты»
+📖 [07-api-openapi.md](07-api-openapi.md) → [раздел 7 «Инструменты»](07-api-openapi.md#7-инструменты)
 </quiz>
 
 <quiz>
@@ -1028,12 +1028,12 @@
 - [ ] `Product`
 - [ ] `Payment`
 
-📖 [07-api-openapi.md](07-api-openapi.md) → раздел 4 «Схемы данных»
+📖 [07-api-openapi.md](07-api-openapi.md) → [раздел 4 «Схемы данных»](07-api-openapi.md#4-схемы-данных-components)
 </quiz>
 
 ---
 
-## API: Интеграции
+## <a id="api-интеграции">API: Интеграции</a>
 
 📖 **Перечитать:** [08-api-integrations.md](08-api-integrations.md)
 
@@ -1045,7 +1045,7 @@
 - [ ] Webhook использует SOAP
 - [ ] Ничем
 
-📖 [08-api-integrations.md](08-api-integrations.md) → раздел 4 «Webhooks»
+📖 [08-api-integrations.md](08-api-integrations.md) → [раздел 4 «Webhooks»](08-api-integrations.md#4-webhooks)
 </quiz>
 
 <quiz>
@@ -1056,7 +1056,7 @@
 - [ ] По User-Agent
 - [ ] По размеру тела
 
-📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → раздел 5 «Безопасность»
+📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → [раздел 5 «Безопасность»](18-api-webhooks-deep.md#5-безопасность)
 </quiz>
 
 <quiz>
@@ -1067,7 +1067,7 @@
 - [ ] Очередь для приоритетных сообщений
 - [ ] Очередь для удалённых сообщений
 
-📖 [08-api-integrations.md](08-api-integrations.md) → раздел 7 «Обработка ошибок»
+📖 [08-api-integrations.md](08-api-integrations.md) → [раздел 7 «Обработка ошибок»](08-api-integrations.md#7-обработка-ошибок)
 </quiz>
 
 <quiz>
@@ -1078,7 +1078,7 @@
 - [ ] В кэш
 - [ ] В лог
 
-📖 [08-api-integrations.md](08-api-integrations.md) → раздел 3 «Асинхронные интеграции»
+📖 [08-api-integrations.md](08-api-integrations.md) → [раздел 3 «Асинхронные интеграции»](08-api-integrations.md#3-асинхронные-интеграции)
 </quiz>
 
 <quiz>
@@ -1089,7 +1089,7 @@
 - [ ] Удаление полей
 - [ ] Индексация
 
-📖 [08-api-integrations.md](08-api-integrations.md) → раздел 8 «Маппинг данных»
+📖 [08-api-integrations.md](08-api-integrations.md) → [раздел 8 «Маппинг данных»](08-api-integrations.md#8-маппинг-данных)
 </quiz>
 
 <quiz>
@@ -1100,7 +1100,7 @@
 - [ ] Только ошибки
 - [ ] Только схему БД
 
-📖 [09-sql-api-workflow.md](09-sql-api-workflow.md) → раздел 4 «Шаблоны документов»
+📖 [09-sql-api-workflow.md](09-sql-api-workflow.md) → [раздел 4 «Шаблоны документов»](09-sql-api-workflow.md#4-шаблоны-документов)
 </quiz>
 
 <quiz>
@@ -1111,7 +1111,7 @@
 - [ ] Тип авторизации
 - [ ] Формат данных
 
-📖 [17-api-idempotency.md](17-api-idempotency.md) → раздел 2 «Что такое идемпотентность»
+📖 [17-api-idempotency.md](17-api-idempotency.md) → [раздел 2 «Что такое идемпотентность»](17-api-idempotency.md#2-что-такое-идемпотентность)
 </quiz>
 
 <quiz>
@@ -1122,12 +1122,12 @@
 - [ ] TOML
 - [ ] INI
 
-📖 [08-api-integrations.md](08-api-integrations.md) → раздел 6 «Пакетный обмен»
+📖 [08-api-integrations.md](08-api-integrations.md) → [раздел 6 «Пакетный обмен»](08-api-integrations.md#6-пакетный-обмен)
 </quiz>
 
 ---
 
-## API: HTTP глубоко
+## <a id="api-http-глубоко">API: HTTP глубоко</a>
 
 📖 **Перечитать:** [15-api-http-deep.md](15-api-http-deep.md)
 
@@ -1139,7 +1139,7 @@
 - [ ] Метод безопасен
 - [ ] Метод кэшируется
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 3 «Методы HTTP»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 3 «Методы HTTP»](15-api-http-deep.md#3-методы-http)
 </quiz>
 
 <quiz>
@@ -1150,7 +1150,7 @@
 - [ ] `PUT`
 - [ ] `DELETE`
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 3 «Методы HTTP»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 3 «Методы HTTP»](15-api-http-deep.md#3-методы-http)
 </quiz>
 
 <quiz>
@@ -1161,7 +1161,7 @@
 - [ ] Формат данных
 - [ ] Протокол
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 8 «CORS»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 8 «CORS»](15-api-http-deep.md#8-cors)
 </quiz>
 
 <quiz>
@@ -1172,7 +1172,7 @@
 - [ ] `Content-Length`
 - [ ] `Retry-After`
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 9 «Кэширование»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 9 «Кэширование»](15-api-http-deep.md#9-кэширование)
 </quiz>
 
 <quiz>
@@ -1183,7 +1183,7 @@
 - [ ] Ресурс удалён
 - [ ] Редирект
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 9 «Кэширование»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 9 «Кэширование»](15-api-http-deep.md#9-кэширование)
 </quiz>
 
 <quiz>
@@ -1194,7 +1194,7 @@
 - [ ] `Rate-Limit-Max`
 - [ ] `Limit-Requests`
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 6 «Response headers»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 6 «Response headers»](15-api-http-deep.md#response-headers)
 </quiz>
 
 <quiz>
@@ -1205,7 +1205,7 @@
 - [ ] Удаление контента
 - [ ] Кэширование
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 7 «Content Negotiation»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 7 «Content Negotiation»](15-api-http-deep.md#6-content-negotiation)
 </quiz>
 
 <quiz>
@@ -1216,12 +1216,12 @@
 - [ ] Пароль
 - [ ] API-ключ
 
-📖 [15-api-http-deep.md](15-api-http-deep.md) → раздел 6 «Request headers»
+📖 [15-api-http-deep.md](15-api-http-deep.md) → [раздел 6 «Request headers»](15-api-http-deep.md#request-headers)
 </quiz>
 
 ---
 
-## API: Паттерны проектирования
+## <a id="api-паттерны-проектирования">API: Паттерны проектирования</a>
 
 📖 **Перечитать:** [16-api-design-patterns.md](16-api-design-patterns.md)
 
@@ -1233,7 +1233,7 @@
 - [ ] `/users/list`
 - [ ] `/user_list`
 
-📖 [16-api-design-patterns.md](16-api-design-patterns.md) → раздел 2 «Именование ресурсов»
+📖 [16-api-design-patterns.md](16-api-design-patterns.md) → [раздел 2 «Именование ресурсов»](16-api-design-patterns.md#2-именование-ресурсов)
 </quiz>
 
 <quiz>
@@ -1244,7 +1244,7 @@
 - [ ] По offset
 - [ ] По дате
 
-📖 [16-api-design-patterns.md](16-api-design-patterns.md) → раздел 3 «Пагинация»
+📖 [16-api-design-patterns.md](16-api-design-patterns.md) → [раздел 3 «Пагинация»](16-api-design-patterns.md#3-пагинация)
 </quiz>
 
 <quiz>
@@ -1255,7 +1255,7 @@
 - [x] Код, сообщение, детали
 - [ ] HTML
 
-📖 [16-api-design-patterns.md](16-api-design-patterns.md) → раздел 6 «Формат ошибок»
+📖 [16-api-design-patterns.md](16-api-design-patterns.md) → [раздел 6 «Формат ошибок»](16-api-design-patterns.md#6-формат-ошибок)
 </quiz>
 
 <quiz>
@@ -1266,7 +1266,7 @@
 - [ ] `#`
 - [ ] `@`
 
-📖 [16-api-design-patterns.md](16-api-design-patterns.md) → раздел 4 «Фильтрация и сортировка»
+📖 [16-api-design-patterns.md](16-api-design-patterns.md) → [раздел 4 «Фильтрация и сортировка»](16-api-design-patterns.md#4-фильтрация-и-сортировка)
 </quiz>
 
 <quiz>
@@ -1277,7 +1277,7 @@
 - [ ] Операция с БД
 - [ ] Операция с файлами
 
-📖 [16-api-design-patterns.md](16-api-design-patterns.md) → раздел 7 «Bulk-операции»
+📖 [16-api-design-patterns.md](16-api-design-patterns.md) → [раздел 7 «Bulk-операции»](16-api-design-patterns.md#7-bulk-операции)
 </quiz>
 
 <quiz>
@@ -1288,7 +1288,7 @@
 - [ ] Добавление поля
 - [ ] Новый endpoint
 
-📖 [16-api-design-patterns.md](16-api-design-patterns.md) → раздел 8 «Версионирование»
+📖 [16-api-design-patterns.md](16-api-design-patterns.md) → [раздел 8 «Версионирование»](16-api-design-patterns.md#8-версионирование)
 </quiz>
 
 <quiz>
@@ -1299,12 +1299,12 @@
 - [ ] `list`
 - [ ] `results`
 
-📖 [16-api-design-patterns.md](16-api-design-patterns.md) → раздел 5 «Формат ответа»
+📖 [16-api-design-patterns.md](16-api-design-patterns.md) → [раздел 5 «Формат ответа»](16-api-design-patterns.md#5-формат-ответа)
 </quiz>
 
 ---
 
-## API: Идемпотентность
+## <a id="api-идемпотентность">API: Идемпотентность</a>
 
 📖 **Перечитать:** [17-api-idempotency.md](17-api-idempotency.md)
 
@@ -1316,7 +1316,7 @@
 - [ ] Для кэширования
 - [ ] Для логирования
 
-📖 [17-api-idempotency.md](17-api-idempotency.md) → раздел 4 «Idempotency-Key»
+📖 [17-api-idempotency.md](17-api-idempotency.md) → [раздел 4 «Idempotency-Key»](17-api-idempotency.md#4-idempotency-key)
 </quiz>
 
 <quiz>
@@ -1327,7 +1327,7 @@
 - [x] `500`
 - [ ] `404`
 
-📖 [17-api-idempotency.md](17-api-idempotency.md) → раздел 5 «Когда повторять»
+📖 [17-api-idempotency.md](17-api-idempotency.md) → [раздел 5 «Когда повторять»](17-api-idempotency.md#когда-повторять)
 </quiz>
 
 <quiz>
@@ -1338,7 +1338,7 @@
 - [ ] Постоянная задержка
 - [ ] Отсутствие задержки
 
-📖 [17-api-idempotency.md](17-api-idempotency.md) → раздел 6 «Backoff и jitter»
+📖 [17-api-idempotency.md](17-api-idempotency.md) → [раздел 6 «Backoff и jitter»](17-api-idempotency.md#6-backoff-и-jitter)
 </quiz>
 
 <quiz>
@@ -1349,7 +1349,7 @@
 - [ ] `503`
 - [ ] `400`
 
-📖 [24-api-security.md](24-api-security.md) → раздел 6 «Rate limiting»
+📖 [24-api-security.md](24-api-security.md) → [раздел 6 «Rate limiting»](24-api-security.md#6-rate-limiting)
 </quiz>
 
 <quiz>
@@ -1360,7 +1360,7 @@
 - [ ] Формат данных
 - [ ] Тип БД
 
-📖 [17-api-idempotency.md](17-api-idempotency.md) → раздел 7 «Circuit Breaker»
+📖 [17-api-idempotency.md](17-api-idempotency.md) → [раздел 7 «Circuit Breaker»](17-api-idempotency.md#7-circuit-breaker)
 </quiz>
 
 <quiz>
@@ -1371,7 +1371,7 @@
 - [ ] Доставится ровно один раз
 - [ ] Не доставится никогда
 
-📖 [17-api-idempotency.md](17-api-idempotency.md) → раздел 9 «Гарантии доставки»
+📖 [17-api-idempotency.md](17-api-idempotency.md) → [раздел 9 «Гарантии доставки»](17-api-idempotency.md#9-гарантии-доставки)
 </quiz>
 
 <quiz>
@@ -1382,7 +1382,7 @@
 - [ ] `Authorization`
 - [ ] `Content-Type`
 
-📖 [17-api-idempotency.md](17-api-idempotency.md) → раздел 4 «Idempotency-Key»
+📖 [17-api-idempotency.md](17-api-idempotency.md) → [раздел 4 «Idempotency-Key»](17-api-idempotency.md#4-idempotency-key)
 </quiz>
 
 ---
@@ -1399,7 +1399,7 @@
 - [ ] Тип БД
 - [ ] Формат данных
 
-📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → раздел 2 «Что такое webhook»
+📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → [раздел 2 «Что такое webhook»](18-api-webhooks-deep.md#2-что-такое-webhook)
 </quiz>
 
 <quiz>
@@ -1410,7 +1410,7 @@
 - [ ] `3xx`
 - [ ] `4xx`
 
-📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → раздел 6 «Retry и доставка»
+📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → [раздел 6 «Retry и доставка»](18-api-webhooks-deep.md#6-retry-и-доставка)
 </quiz>
 
 <quiz>
@@ -1421,7 +1421,7 @@
 - [ ] Только для одного события
 - [ ] Зависит от сервера
 
-📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → раздел 8 «Порядок доставки»
+📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → [раздел 8 «Порядок доставки»](18-api-webhooks-deep.md#8-порядок-доставки)
 </quiz>
 
 <quiz>
@@ -1432,7 +1432,7 @@
 - [ ] `X-Auth`
 - [ ] `X-Hash`
 
-📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → раздел 5 «Безопасность»
+📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → [раздел 5 «Безопасность»](18-api-webhooks-deep.md#5-безопасность)
 </quiz>
 
 <quiz>
@@ -1443,7 +1443,7 @@
 - [ ] Отвечать `500`
 - [ ] Перезапустить сервис
 
-📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → раздел 7 «Идемпотентность»
+📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → [раздел 7 «Идемпотентность»](18-api-webhooks-deep.md#7-идемпотентность)
 </quiz>
 
 <quiz>
@@ -1454,7 +1454,7 @@
 - [ ] Удалить подписку
 - [ ] Отправить письмо
 
-📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → раздел 6 «Retry и доставка»
+📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → [раздел 6 «Retry и доставка»](18-api-webhooks-deep.md#6-retry-и-доставка)
 </quiz>
 
 <quiz>
@@ -1465,12 +1465,12 @@
 - [ ] `action`
 - [ ] `name`
 
-📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → раздел 4 «Формат payload»
+📖 [18-api-webhooks-deep.md](18-api-webhooks-deep.md) → [раздел 4 «Формат payload»](18-api-webhooks-deep.md#4-формат-payload)
 </quiz>
 
 ---
 
-## API: Очереди и брокеры
+## <a id="api-очереди-и-брокеры">API: Очереди и брокеры</a>
 
 📖 **Перечитать:** [19-api-messaging.md](19-api-messaging.md)
 
@@ -1482,7 +1482,7 @@
 - [ ] Kafka только для Python
 - [ ] RabbitMQ быстрее
 
-📖 [19-api-messaging.md](19-api-messaging.md) → раздел 4 «Kafka» и раздел 5 «RabbitMQ»
+📖 [19-api-messaging.md](19-api-messaging.md) → [раздел 4 «Kafka»](19-api-messaging.md#4-kafka) и раздел 5 «RabbitMQ»
 </quiz>
 
 <quiz>
@@ -1493,7 +1493,7 @@
 - [ ] Формат данных
 - [ ] Потребитель
 
-📖 [19-api-messaging.md](19-api-messaging.md) → раздел 4 «Kafka»
+📖 [19-api-messaging.md](19-api-messaging.md) → [раздел 4 «Kafka»](19-api-messaging.md#4-kafka)
 </quiz>
 
 <quiz>
@@ -1504,7 +1504,7 @@
 - [ ] Тип топика
 - [ ] Часть сообщения
 
-📖 [19-api-messaging.md](19-api-messaging.md) → раздел 4 «Kafka»
+📖 [19-api-messaging.md](19-api-messaging.md) → [раздел 4 «Kafka»](19-api-messaging.md#4-kafka)
 </quiz>
 
 <quiz>
@@ -1515,7 +1515,7 @@
 - [ ] В кэш
 - [ ] В лог
 
-📖 [19-api-messaging.md](19-api-messaging.md) → раздел 2 «Что такое очередь»
+📖 [19-api-messaging.md](19-api-messaging.md) → [раздел 2 «Что такое очередь»](19-api-messaging.md#2-что-такое-очередь)
 </quiz>
 
 <quiz>
@@ -1526,7 +1526,7 @@
 - [ ] Формат данных
 - [ ] Тип авторизации
 
-📖 [19-api-messaging.md](19-api-messaging.md) → раздел 8 «Outbox»
+📖 [19-api-messaging.md](19-api-messaging.md) → [раздел 8 «Outbox»](19-api-messaging.md#outbox)
 </quiz>
 
 <quiz>
@@ -1537,7 +1537,7 @@
 - [ ] Протокол
 - [ ] Формат данных
 
-📖 [19-api-messaging.md](19-api-messaging.md) → раздел 8 «Saga»
+📖 [19-api-messaging.md](19-api-messaging.md) → [раздел 8 «Saga»](19-api-messaging.md#saga)
 </quiz>
 
 <quiz>
@@ -1548,12 +1548,12 @@
 - [ ] Competing Consumers
 - [ ] DLQ
 
-📖 [19-api-messaging.md](19-api-messaging.md) → раздел 8 «Pub/Sub»
+📖 [19-api-messaging.md](19-api-messaging.md) → [раздел 8 «Pub/Sub»](19-api-messaging.md#pub-sub)
 </quiz>
 
 ---
 
-## API: Тестирование
+## <a id="api-тестирование">API: Тестирование</a>
 
 📖 **Перечитать:** [20-api-testing.md](20-api-testing.md)
 
@@ -1565,7 +1565,7 @@
 - [ ] База данных
 - [ ] Формат данных
 
-📖 [20-api-testing.md](20-api-testing.md) → раздел 3 «Postman»
+📖 [20-api-testing.md](20-api-testing.md) → [раздел 3 «Postman»](20-api-testing.md#3-postman)
 </quiz>
 
 <quiz>
@@ -1576,7 +1576,7 @@
 - [ ] Проверка кода
 - [ ] Проверка безопасности
 
-📖 [20-api-testing.md](20-api-testing.md) → раздел 4 «Contract testing»
+📖 [20-api-testing.md](20-api-testing.md) → [раздел 4 «Contract testing»](20-api-testing.md#4-contract-testing)
 </quiz>
 
 <quiz>
@@ -1587,7 +1587,7 @@
 - [ ] Прокси
 - [ ] База данных
 
-📖 [20-api-testing.md](20-api-testing.md) → раздел 5 «Mock-серверы»
+📖 [20-api-testing.md](20-api-testing.md) → [раздел 5 «Mock-серверы»](20-api-testing.md#5-mock-серверы)
 </quiz>
 
 <quiz>
@@ -1598,7 +1598,7 @@
 - [ ] `p99`
 - [ ] `avg`
 
-📖 [20-api-testing.md](20-api-testing.md) → раздел 6 «Нагрузочное тестирование»
+📖 [20-api-testing.md](20-api-testing.md) → [раздел 6 «Нагрузочное тестирование»](20-api-testing.md#6-нагрузочное-тестирование)
 </quiz>
 
 <quiz>
@@ -1609,7 +1609,7 @@
 - [ ] Только ошибки сервера
 - [ ] Только нагрузку
 
-📖 [20-api-testing.md](20-api-testing.md) → раздел 7 «Проверка edge cases»
+📖 [20-api-testing.md](20-api-testing.md) → [раздел 7 «Проверка edge cases»](20-api-testing.md#7-проверка-edge-cases)
 </quiz>
 
 <quiz>
@@ -1620,7 +1620,7 @@
 - [ ] Формат данных
 - [ ] Язык
 
-📖 [20-api-testing.md](20-api-testing.md) → раздел 3 «Newman»
+📖 [20-api-testing.md](20-api-testing.md) → [раздел 3 «Newman»](20-api-testing.md#newman)
 </quiz>
 
 ---
@@ -1637,7 +1637,7 @@
 - [ ] GraphQL только для Python
 - [ ] REST быстрее
 
-📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → раздел 2 «GraphQL»
+📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → [раздел 2 «GraphQL»](21-api-graphql-grpc.md#graphql)
 </quiz>
 
 <quiz>
@@ -1648,7 +1648,7 @@
 - [ ] Формат данных
 - [ ] Тип БД
 
-📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → раздел 3 «gRPC»
+📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → [раздел 3 «gRPC»](21-api-graphql-grpc.md#grpc)
 </quiz>
 
 <quiz>
@@ -1659,7 +1659,7 @@
 - [ ] HTTP-запрос
 - [ ] Формат данных
 
-📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → раздел 4 «WebSocket»
+📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → [раздел 4 «WebSocket»](21-api-graphql-grpc.md#websocket)
 </quiz>
 
 <quiz>
@@ -1670,7 +1670,7 @@
 - [ ] `subscription`
 - [ ] `fetch`
 
-📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → раздел 2 «GraphQL»
+📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → [раздел 2 «GraphQL»](21-api-graphql-grpc.md#graphql)
 </quiz>
 
 <quiz>
@@ -1681,7 +1681,7 @@
 - [ ] Тип БД
 - [ ] Формат данных
 
-📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → раздел 5 «Server-Sent Events»
+📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → [раздел 5 «Server-Sent Events»](21-api-graphql-grpc.md#5-server-sent-events-sse)
 </quiz>
 
 <quiz>
@@ -1692,12 +1692,12 @@
 - [ ] `.thrift`
 - [ ] `.avro`
 
-📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → раздел 3 «gRPC»
+📖 [21-api-graphql-grpc.md](21-api-graphql-grpc.md) → [раздел 3 «gRPC»](21-api-graphql-grpc.md#grpc)
 </quiz>
 
 ---
 
-## API: Кэширование
+## <a id="api-кэширование">API: Кэширование</a>
 
 📖 **Перечитать:** [22-api-caching.md](22-api-caching.md)
 
@@ -1709,7 +1709,7 @@
 - [ ] Кэширует только в браузере
 - [ ] Удаляет кэш
 
-📖 [22-api-caching.md](22-api-caching.md) → раздел 4 «Cache-Control»
+📖 [22-api-caching.md](22-api-caching.md) → [раздел 4 «Cache-Control»](22-api-caching.md#4-cache-control)
 </quiz>
 
 <quiz>
@@ -1720,7 +1720,7 @@
 - [ ] Формат данных
 - [ ] Индекс
 
-📖 [22-api-caching.md](22-api-caching.md) → раздел 5 «ETag и условные запросы»
+📖 [22-api-caching.md](22-api-caching.md) → [раздел 5 «ETag и условные запросы»](22-api-caching.md#5-etag-и-условные-запросы)
 </quiz>
 
 <quiz>
@@ -1731,7 +1731,7 @@
 - [ ] Не кэшируется
 - [ ] Кэшируется на CDN
 
-📖 [22-api-caching.md](22-api-caching.md) → раздел 4 «Cache-Control»
+📖 [22-api-caching.md](22-api-caching.md) → [раздел 4 «Cache-Control»](22-api-caching.md#4-cache-control)
 </quiz>
 
 <quiz>
@@ -1742,7 +1742,7 @@
 - [ ] `404`
 - [ ] `500`
 
-📖 [22-api-caching.md](22-api-caching.md) → раздел 5 «ETag и условные запросы»
+📖 [22-api-caching.md](22-api-caching.md) → [раздел 5 «ETag и условные запросы»](22-api-caching.md#5-etag-и-условные-запросы)
 </quiz>
 
 <quiz>
@@ -1753,7 +1753,7 @@
 - [ ] Удаление кэша
 - [ ] Тип БД
 
-📖 [22-api-caching.md](22-api-caching.md) → раздел 8 «Проблемы»
+📖 [22-api-caching.md](22-api-caching.md) → [раздел 8 «Проблемы»](22-api-caching.md#проблемы)
 </quiz>
 
 <quiz>
@@ -1764,12 +1764,12 @@
 - [ ] Формат данных
 - [ ] Брокер сообщений
 
-📖 [22-api-caching.md](22-api-caching.md) → раздел 8 «Redis»
+📖 [22-api-caching.md](22-api-caching.md) → [раздел 8 «Redis»](22-api-caching.md#8-redis)
 </quiz>
 
 ---
 
-## API: Мониторинг
+## <a id="api-мониторинг">API: Мониторинг</a>
 
 📖 **Перечитать:** [23-api-monitoring.md](23-api-monitoring.md)
 
@@ -1781,7 +1781,7 @@
 - [ ] Code, Tests, Docs
 - [ ] CPU, RAM, Disk
 
-📖 [23-api-monitoring.md](23-api-monitoring.md) → раздел 2 «Три столпа наблюдаемости»
+📖 [23-api-monitoring.md](23-api-monitoring.md) → [раздел 2 «Три столпа наблюдаемости»](23-api-monitoring.md#2-три-столпа-наблюдаемости)
 </quiz>
 
 <quiz>
@@ -1792,7 +1792,7 @@
 - [ ] Цель
 - [ ] Алерт
 
-📖 [23-api-monitoring.md](23-api-monitoring.md) → раздел 6 «SLI, SLO, SLA»
+📖 [23-api-monitoring.md](23-api-monitoring.md) → [раздел 6 «SLI, SLO, SLA»](23-api-monitoring.md#6-sli-slo-sla)
 </quiz>
 
 <quiz>
@@ -1803,7 +1803,7 @@
 - [ ] Обязательство перед клиентом
 - [ ] Лог
 
-📖 [23-api-monitoring.md](23-api-monitoring.md) → раздел 6 «SLI, SLO, SLA»
+📖 [23-api-monitoring.md](23-api-monitoring.md) → [раздел 6 «SLI, SLO, SLA»](23-api-monitoring.md#6-sli-slo-sla)
 </quiz>
 
 <quiz>
@@ -1814,7 +1814,7 @@
 - [ ] YAML
 - [ ] CSV
 
-📖 [23-api-monitoring.md](23-api-monitoring.md) → раздел 3 «Логи»
+📖 [23-api-monitoring.md](23-api-monitoring.md) → [раздел 3 «Логи»](23-api-monitoring.md#3-логи)
 </quiz>
 
 <quiz>
@@ -1825,7 +1825,7 @@
 - [ ] Метрики
 - [ ] Алерт
 
-📖 [23-api-monitoring.md](23-api-monitoring.md) → раздел 5 «Трассировка»
+📖 [23-api-monitoring.md](23-api-monitoring.md) → [раздел 5 «Трассировка»](23-api-monitoring.md#5-трассировка)
 </quiz>
 
 <quiz>
@@ -1836,12 +1836,12 @@
 - [ ] Для кэша
 - [ ] Для rate limiting
 
-📖 [23-api-monitoring.md](23-api-monitoring.md) → раздел 5 «Трассировка»
+📖 [23-api-monitoring.md](23-api-monitoring.md) → [раздел 5 «Трассировка»](23-api-monitoring.md#5-трассировка)
 </quiz>
 
 ---
 
-## API: Безопасность
+## <a id="api-безопасность">API: Безопасность</a>
 
 📖 **Перечитать:** [24-api-security.md](24-api-security.md)
 
@@ -1853,7 +1853,7 @@
 - [ ] Ошибка в заголовках
 - [ ] Утечка данных через логи
 
-📖 [24-api-security.md](24-api-security.md) → раздел 2 «OWASP API Top 10»
+📖 [24-api-security.md](24-api-security.md) → [раздел 2 «OWASP API Top 10»](24-api-security.md#2-owasp-api-top-10)
 </quiz>
 
 <quiz>
@@ -1864,7 +1864,7 @@
 - [ ] Для кэша
 - [ ] Для логирования
 
-📖 [24-api-security.md](24-api-security.md) → раздел 6 «Rate limiting»
+📖 [24-api-security.md](24-api-security.md) → [раздел 6 «Rate limiting»](24-api-security.md#6-rate-limiting)
 </quiz>
 
 <quiz>
@@ -1875,7 +1875,7 @@
 - [ ] Тип индекса
 - [ ] Формат данных
 
-📖 [24-api-security.md](24-api-security.md) → раздел 5 «Защита от атак»
+📖 [24-api-security.md](24-api-security.md) → [раздел 5 «Защита от атак»](24-api-security.md#5-защита-от-атак)
 </quiz>
 
 <quiz>
@@ -1886,7 +1886,7 @@
 - [ ] Конкатенированные
 - [ ] Вложенные
 
-📖 [24-api-security.md](24-api-security.md) → раздел 5 «Защита от атак»
+📖 [24-api-security.md](24-api-security.md) → [раздел 5 «Защита от атак»](24-api-security.md#5-защита-от-атак)
 </quiz>
 
 <quiz>
@@ -1897,7 +1897,7 @@
 - [ ] Тип БД
 - [ ] Формат данных
 
-📖 [24-api-security.md](24-api-security.md) → раздел 5 «Защита от атак»
+📖 [24-api-security.md](24-api-security.md) → [раздел 5 «Защита от атак»](24-api-security.md#5-защита-от-атак)
 </quiz>
 
 <quiz>
@@ -1908,7 +1908,7 @@
 - [ ] Через индексы
 - [ ] Через кэш
 
-📖 [24-api-security.md](24-api-security.md) → раздел 5 «Mass Assignment»
+📖 [24-api-security.md](24-api-security.md) → [раздел 5 «Mass Assignment»](24-api-security.md#mass-assignment)
 </quiz>
 
 <quiz>
@@ -1919,7 +1919,7 @@
 - [ ] Шифруют
 - [ ] Хэшируют
 
-📖 [24-api-security.md](24-api-security.md) → раздел 4 «Работа с чувствительными данными»
+📖 [24-api-security.md](24-api-security.md) → [раздел 4 «Работа с чувствительными данными»](24-api-security.md#4-работа-с-чувствительными-данными)
 </quiz>
 
 ---
@@ -1928,18 +1928,18 @@
 
 ---
 
-## 📊 О тестах
+## <a id="о-тестах">📊 О тестах</a>
 
 **Всего вопросов:** ~140  
 **Охват:** все 24 учебных файла справочника
 
-### Как использовать
+### <a id="как-использовать">Как использовать</a>
 
 1. **Терминал** — `mkdocs-quiz run 25-quiz.md`
 2. **Браузер** — `pip install mkdocs-quiz` → `mkdocs serve`
 3. **Статически** — открыть в редакторе Markdown с поддержкой `<details>`
 
-### Соответствие разделам справочника
+### <a id="соответствие-разделам-справочника">Соответствие разделам справочника</a>
 
 | Раздел тестов | Файлы справочника |
 |---|---|
@@ -1967,7 +1967,7 @@
 | API: Мониторинг | [23-api-monitoring.md](23-api-monitoring.md) |
 | API: Безопасность | [24-api-security.md](24-api-security.md) |
 
-### Рекомендации
+### <a id="рекомендации">Рекомендации</a>
 
 - Проходите тесты **после** изучения соответствующего файла.
 - Если ответ неверный — переходите по ссылке в пояснении.
