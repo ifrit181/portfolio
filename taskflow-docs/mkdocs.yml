@@ -2,6 +2,17 @@ site_name: TaskFlow — документация
 site_description: Система управления задачами и проектами
 site_author: "[Кудряшова Т.В.]"
 
+# Плагины которые должны быть установлены:
+# плагин:  MkDocs Quiz Plugin, описание: плагин для тестов, команда: pip install mkdocs-quiz 
+# плагин:  Search, описание: поиск по документации, команда: не требуется, входит в mkdocs
+# плагин:  Include Markdown, описание: подключение фрагментов других файлов в страницы, команда: pip install mkdocs-include-markdown-plugin
+# плагин:  Tags, описание: разметка страниц тегами, команда: не требуется, входит в mkdocs-material
+# плагин:  GLightbox, описание: лайтбокс для изображений, увеличение по клику, команда: pip install mkdocs-glightbox
+# плагин:  Git Revision Date Localized, описание: дата последнего изменения страницы из git, включается в CI, команда: pip install mkdocs-git-revision-date-localized-plugin
+# плагин:  Blog, описание: раздел блога с датированными записями, команда: не требуется, входит в mkdocs-material
+# плагин:  Minify, описание: минификация HTML, JS и CSS собранного сайта, команда: pip install mkdocs-minify-plugin
+# плагин:  Swagger UI Tag, описание: встраивание OpenAPI/Swagger-спецификации на страницы, команда: pip install mkdocs-swagger-ui-tag
+
 site_url: "https://ifrit181.github.io/portfolio/"
 
 repo_name: "ifrit181/portfolio"
@@ -43,6 +54,12 @@ extra_css:
 extra_javascript:
   - assets/javascripts/download-pdf.js
 
+extra:
+  # Префиксы путей (относительно docs/), для которых PDF не генерируется:
+  # кнопка «Скачать в PDF» на таких страницах автоматически скрывается.
+  pdf_exclude:
+    - sql-api/
+
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
@@ -82,6 +99,7 @@ plugins:
       docExpansion: none
       filter: ""
       tryItOutEnabled: true
+  - mkdocs_quiz
 
 hooks:
   - hooks/generate_pdf.py
@@ -104,6 +122,37 @@ nav:
       - Настройки: admin-guide/settings.md
   - API:
       - Обзор: api/reference.md
+
+  - SQL и API:
+      - Обзор курса: sql-api/README.md
+      - Обзор темы: sql-api/00-sql-api-overview.md
+      - SQL:
+          - Основы выборки: sql-api/01-sql-basics.md
+          - JOIN и соединения: sql-api/02-sql-joins.md
+          - Агрегация и группировка: sql-api/03-sql-aggregation.md
+          - Продвинутый SQL: sql-api/04-sql-advanced.md
+          - DDL, DML, транзакции: sql-api/10-sql-ddl-dml.md
+          - Производительность: sql-api/11-sql-performance.md
+          - Даты, время, TZ: sql-api/12-sql-dates.md
+          - Диалекты СУБД: sql-api/13-sql-dialects.md
+          - Аналитика данных: sql-api/14-sql-analytics.md
+      - API:
+          - REST основы: sql-api/05-api-rest.md
+          - Аутентификация и авторизация: sql-api/06-api-auth.md
+          - OpenAPI / Swagger: sql-api/07-api-openapi.md
+          - Интеграции: sql-api/08-api-integrations.md
+          - HTTP глубоко: sql-api/15-api-http-deep.md
+          - Паттерны проектирования: sql-api/16-api-design-patterns.md
+          - Идемпотентность и надёжность: sql-api/17-api-idempotency.md
+          - Webhooks: sql-api/18-api-webhooks-deep.md
+          - Очереди и брокеры: sql-api/19-api-messaging.md
+          - Тестирование API: sql-api/20-api-testing.md
+          - GraphQL, gRPC, WebSocket: sql-api/21-api-graphql-grpc.md
+          - Кэширование: sql-api/22-api-caching.md
+          - Мониторинг: sql-api/23-api-monitoring.md
+          - Безопасность: sql-api/24-api-security.md
+      - Сквозной процесс: sql-api/09-sql-api-workflow.md
+      - Тесты для самопроверки: sql-api/25-quiz.md
 
   - Теги: tags.md
   - Документация в PDF:

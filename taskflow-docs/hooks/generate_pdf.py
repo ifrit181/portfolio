@@ -185,6 +185,15 @@ def on_post_build(config):
     site_dir = Path(config["site_dir"])
     src_files = sorted(set(_iter_nav_files(config.get("nav"))))
 
+    # Pages listed under ``extra.pdf_exclude`` (path prefixes relative to
+    # docs_dir) are never converted — e.g. the SQL/API course, where a PDF
+    # per page would triple the CI time. The download button hides itself
+    # when the PDF is missing (see assets/javascripts/download-pdf.js).
+    exclude = (config.get("extra") or {}).get("pdf_exclude") or []
+    if exclude:
+        prefixes = tuple(exclude)
+        src_files = [f for f in src_files if not f.startswith(prefixes)]
+
     with tempfile.TemporaryDirectory(prefix="docx2pdf-") as tmp:
         tmp = Path(tmp)
         work = tmp / "work"
