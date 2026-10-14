@@ -153,6 +153,7 @@ nav:
           - Безопасность: sql-api/24-api-security.md
       - Сквозной процесс: sql-api/09-sql-api-workflow.md
       - Тесты для самопроверки: sql-api/25-quiz.md
+      - Подготовка к собеседованию: sql-api/26-interview-guide.md
 
   - Теги: tags.md
   - Документация в PDF:
